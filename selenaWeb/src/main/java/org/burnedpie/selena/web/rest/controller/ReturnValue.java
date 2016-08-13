@@ -1,9 +1,11 @@
 package org.burnedpie.selena.web.rest.controller;
 
 /**
+ * Returned value.
+ *
  * Created by jibe on 13/08/16.
  */
-public class RestReturnValue {
+public class ReturnValue {
 
     private String message;
     private String status;
@@ -26,6 +28,6 @@ public class RestReturnValue {
 
     @Override
     public String toString() {
-        return "RestReturnValue{status="+ status+", message="+ message+"}";
+        return "ReturnValue{status="+ status+", message="+ message+"}";
     }
 }

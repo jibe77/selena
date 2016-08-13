@@ -24,21 +24,28 @@ import java.util.logging.Logger;
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 public class TestRestController {
 
-    @Autowired
     RemoteController remoteController;
+
+    @Before
+    public void setup() {
+        remoteController = new RemoteController();
+
+        remoteController.setAirplayService(null);
+        remoteController.setRadioService(null);
+    }
 
     @Test
     public void testRemoteControllerPlayRadio() {
         // given that
-        String url = "http://localhost:8080/playRadioStation?radioStation=1";
+        int station = 1;
         // ... mockito ...
 
         // when
-        RestReturnValue returnValue = remoteController.playRadioStation(1);
+        ReturnValue returnValue = remoteController.playRadioStation(station);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Radio station set to 1.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(station)), returnValue.getMessage());
         // ... mockito ... :
         // 1. si airplay, couper airplay
         // 2. si radio, couper radio

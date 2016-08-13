@@ -1,5 +1,7 @@
 package org.burnedpie.selena.web.rest.controller;
 
+import org.burnedpie.selena.audio.AirplayService;
+import org.burnedpie.selena.audio.RadioService;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @EnableAutoConfiguration
 public class RemoteController {
+
+    // selena audio dependencies
+    AirplayService airplayService;
+    RadioService radioService;
 
     // global constants
     public static final String SUCCESS              =   "SUCCESS";
@@ -17,11 +23,11 @@ public class RemoteController {
     public static final String REST_STOP            =   "/stop";
 
     @RequestMapping(REST_STOP)
-    RestReturnValue stop() {
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(SUCCESS);
-        restReturnValue.setMessage(PLAYER_STOPPED);
-        return restReturnValue;
+    ReturnValue stop() {
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(SUCCESS);
+        ReturnValue.setMessage(PLAYER_STOPPED);
+        return ReturnValue;
     }
 
     // volume constants and method
@@ -31,19 +37,19 @@ public class RemoteController {
     public static final String REST_VOLUME_DOWN     =   "/volumeDown";
 
     @RequestMapping(REST_VOLUME_UP)
-    RestReturnValue volumUp() {
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(SUCCESS);
-        restReturnValue.setMessage(VOLUME_TURNED_UP);
-        return restReturnValue;
+    ReturnValue volumUp() {
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(SUCCESS);
+        ReturnValue.setMessage(VOLUME_TURNED_UP);
+        return ReturnValue;
     }
 
     @RequestMapping(REST_VOLUME_DOWN)
-    RestReturnValue volumeDown() {
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(SUCCESS);
-        restReturnValue.setMessage(VOLUME_TURNED_DOWN);
-        return restReturnValue;
+    ReturnValue volumeDown() {
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(SUCCESS);
+        ReturnValue.setMessage(VOLUME_TURNED_DOWN);
+        return ReturnValue;
     }
 
     // radio constants and methods
@@ -51,11 +57,11 @@ public class RemoteController {
     public static final String REST_PLAY_RADIO_STATION =   "/playRadioStation";
 
     @RequestMapping(REST_PLAY_RADIO_STATION)
-    RestReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(SUCCESS);
-        restReturnValue.setMessage(RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
-        return restReturnValue;
+    ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(SUCCESS);
+        ReturnValue.setMessage(RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
+        return ReturnValue;
     }
 
     // airplay constants and methods
@@ -63,18 +69,28 @@ public class RemoteController {
     public static final String REST_START_AIRPLAY   =   "/startAirplay";
 
     @RequestMapping(REST_START_AIRPLAY)
-    RestReturnValue startAirplay() {
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(SUCCESS);
-        restReturnValue.setMessage(AIRPLAY_STARTED);
-        return restReturnValue;
+    ReturnValue startAirplay() {
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(SUCCESS);
+        ReturnValue.setMessage(AIRPLAY_STARTED);
+        return ReturnValue;
     }
 
+    public AirplayService getAirplayService() {
+        return airplayService;
+    }
 
+    public void setAirplayService(AirplayService airplayService) {
+        this.airplayService = airplayService;
+    }
 
+    public RadioService getRadioService() {
+        return radioService;
+    }
 
-
-
+    public void setRadioService(RadioService radioService) {
+        this.radioService = radioService;
+    }
 
     /**
      * Starts web server, for test purpose.

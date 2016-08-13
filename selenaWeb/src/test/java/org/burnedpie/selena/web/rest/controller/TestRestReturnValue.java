@@ -15,13 +15,13 @@ public class TestRestReturnValue {
         String message = "Radio station set to 1.";
 
         // when
-        RestReturnValue restReturnValue = new RestReturnValue();
-        restReturnValue.setStatus(status);
-        restReturnValue.setMessage(message);
+        ReturnValue ReturnValue = new ReturnValue();
+        ReturnValue.setStatus(status);
+        ReturnValue.setMessage(message);
 
         // then
         Assert.assertEquals(
-                "RestReturnValue{status="+ status+", message="+ message+"}",
-                restReturnValue.toString());
+                "ReturnValue{status="+ status+", message="+ message+"}",
+                ReturnValue.toString());
     }
 }

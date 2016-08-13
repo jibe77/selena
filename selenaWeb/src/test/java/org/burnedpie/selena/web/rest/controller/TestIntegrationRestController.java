@@ -51,7 +51,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -68,7 +68,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -84,7 +84,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -98,7 +98,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -112,7 +112,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -126,7 +126,7 @@ public class TestIntegrationRestController {
 
         // when
         RestTemplate restTemplate = new RestTemplate();
-        RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
+        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
