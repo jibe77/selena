@@ -12,7 +12,39 @@ public class RemoteController {
     RestReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
         RestReturnValue restReturnValue = new RestReturnValue();
         restReturnValue.setStatus("OK");
-        restReturnValue.setMessage("Radio station set to 1.");
+        restReturnValue.setMessage("Radio station set to "+radioStation+".");
+        return restReturnValue;
+    }
+
+    @RequestMapping("/startAirplay")
+    RestReturnValue startAirplay() {
+        RestReturnValue restReturnValue = new RestReturnValue();
+        restReturnValue.setStatus("OK");
+        restReturnValue.setMessage("Airplay is started.");
+        return restReturnValue;
+    }
+
+    @RequestMapping("/stop")
+    RestReturnValue stop() {
+        RestReturnValue restReturnValue = new RestReturnValue();
+        restReturnValue.setStatus("OK");
+        restReturnValue.setMessage("Player is stopped.");
+        return restReturnValue;
+    }
+
+    @RequestMapping("/volumeUp")
+    RestReturnValue volumUp() {
+        RestReturnValue restReturnValue = new RestReturnValue();
+        restReturnValue.setStatus("OK");
+        restReturnValue.setMessage("Volume is turned up.");
+        return restReturnValue;
+    }
+
+    @RequestMapping("/volumeDown")
+    RestReturnValue volumeDown() {
+        RestReturnValue restReturnValue = new RestReturnValue();
+        restReturnValue.setStatus("OK");
+        restReturnValue.setMessage("Volume is turned down.");
         return restReturnValue;
     }
 
