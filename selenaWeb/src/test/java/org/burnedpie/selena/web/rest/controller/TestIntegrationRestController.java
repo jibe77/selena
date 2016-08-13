@@ -28,6 +28,8 @@ public class TestIntegrationRestController {
 
     ConfigurableApplicationContext configurableApplicationContext;
 
+    private static final String APPLICATION_URL = "http://localhost:8080";
+
     @Before
     public void setUp() {
         configurableApplicationContext =
@@ -44,84 +46,90 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerPlayRadio() {
         // given that
-        String url = "http://localhost:8080/playRadioStation?radioStation=1";
+        int station = 1;
+        String url = APPLICATION_URL + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Radio station set to 1.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(
+                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(station)),
+                returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerPlayRadio10() {
         // given that
-        String url = "http://localhost:8080/playRadioStation?radioStation=10";
+        int station = 10;
+        String url = APPLICATION_URL + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Radio station set to 10.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(
+                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(station)),
+                returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerStartAirplay() {
         // given that
-        String url = "http://localhost:8080/startAirplay";
+        String url = APPLICATION_URL + RemoteController.REST_START_AIRPLAY;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Airplay is started.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerStop() {
         // given that
-        String url = "http://localhost:8080/stop";
+        String url = APPLICATION_URL + RemoteController.REST_STOP;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Player is stopped.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerVolumeUp() {
         // given that
-        String url = "http://localhost:8080/volumeUp";
+        String url = APPLICATION_URL + RemoteController.REST_VOLUME_UP;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Volume is turned up.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.VOLUME_TURNED_UP, returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerVolumeDown() {
         // given that
-        String url = "http://localhost:8080/volumeDown";
+        String url = APPLICATION_URL + RemoteController.REST_VOLUME_DOWN;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
         RestReturnValue returnValue = restTemplate.getForObject(url, RestReturnValue.class);
 
         // then
-        Assert.assertEquals("OK", returnValue.getStatus());
-        Assert.assertEquals("Volume is turned down.", returnValue.getMessage());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.VOLUME_TURNED_DOWN, returnValue.getMessage());
     }
 }
