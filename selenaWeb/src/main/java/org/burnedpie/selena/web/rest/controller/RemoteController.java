@@ -2,6 +2,8 @@ package org.burnedpie.selena.web.rest.controller;
 
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
+import org.burnedpie.selena.audio.exception.RadioException;
+import org.burnedpie.selena.persistance.PersistanceService;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ public class RemoteController {
     // selena audio dependencies
     AirplayService airplayService;
     RadioService radioService;
+    PersistanceService persistanceService;
 
     // global constants
     public static final String SUCCESS              =   "SUCCESS";
@@ -58,6 +61,19 @@ public class RemoteController {
 
     @RequestMapping(REST_PLAY_RADIO_STATION)
     ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
+        if (airplayService.isAirplayOn()) {
+            airplayService.turnAirplayOff();
+        }
+        if (radioService.isRadioOn()) {
+            radioService.stopRadio();
+        }
+        String url = persistanceService.findRadioStationUrlByIndex(radioStation);
+        try {
+            radioService.playRadioChannel(url);
+        } catch (RadioException e) {
+            airplayService.turnAirplayOn(persistanceService.findAirplayServiceName());
+        }
+
         ReturnValue ReturnValue = new ReturnValue();
         ReturnValue.setStatus(SUCCESS);
         ReturnValue.setMessage(RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
@@ -90,6 +106,14 @@ public class RemoteController {
 
     public void setRadioService(RadioService radioService) {
         this.radioService = radioService;
+    }
+
+    public PersistanceService getPersistanceService() {
+        return persistanceService;
+    }
+
+    public void setPersistanceService(PersistanceService persistanceService) {
+        this.persistanceService = persistanceService;
     }
 
     /**

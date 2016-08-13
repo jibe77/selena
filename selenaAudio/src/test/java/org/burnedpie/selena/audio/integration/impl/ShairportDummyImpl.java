@@ -33,8 +33,6 @@ public class ShairportDummyImpl implements AirplayService {
             }
         };
         thread.start();
-        return;
-
     }
 
     public void turnAirplayOff() {

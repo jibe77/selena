@@ -31,7 +31,6 @@ public class RadioServiceImpl implements RadioService {
             }
         };
         thread.start();
-        return;
     }
 
     public void stopRadio() {

@@ -35,8 +35,6 @@ public class ShairportSyncImpl implements AirplayService{
             }
         };
         thread.start();
-        return;
-
     }
 
     public void turnAirplayOff() {
