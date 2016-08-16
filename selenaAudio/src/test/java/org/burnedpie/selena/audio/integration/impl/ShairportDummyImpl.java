@@ -4,6 +4,7 @@ import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
+import org.burnedpie.selena.persistance.PersistanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -18,9 +19,13 @@ public class ShairportDummyImpl implements AirplayService {
     @Autowired
     private NativeCommand nativeCommand;
 
-    Thread thread;
+    @Autowired
+    PersistanceService persistanceService;
 
-    public void turnAirplayOn(final String serviceName) throws AirplayException {
+    private Thread thread;
+
+    public void turnAirplayOn() throws AirplayException {
+        final String serviceName = persistanceService.findAirplayServiceName();
         thread = new Thread() {
             @Override
             public void run() {

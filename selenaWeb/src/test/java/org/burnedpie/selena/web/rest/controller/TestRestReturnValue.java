@@ -24,4 +24,33 @@ public class TestRestReturnValue {
                 "ReturnValue{status="+ status+", message="+ message+"}",
                 ReturnValue.toString());
     }
+
+    @Test
+    public void testReturnValueToString2() {
+        // given that
+        String status = "OK";
+        String message = "Radio station set to 1.";
+
+        // when
+        ReturnValue ReturnValue = new ReturnValue(status, message);
+        // then
+        Assert.assertEquals(
+                "ReturnValue{status="+ status+", message="+ message+"}",
+                ReturnValue.toString());
+    }
+
+    @Test
+    public void testReturnValueToString3() {
+        // given that
+        String status = "OK";
+        String message = "Radio station set to {0}.";
+        String station = "1";
+
+        // when
+        ReturnValue ReturnValue = new ReturnValue(status, message, station);
+        // then
+        Assert.assertEquals(
+                "ReturnValue{status="+ status+", message="+ message.replace("{0}", station)+"}",
+                ReturnValue.toString());
+    }
 }

@@ -7,6 +7,7 @@ import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.burnedpie.selena.persistance.PersistanceService;
 
 import java.io.IOException;
 
@@ -14,16 +15,18 @@ import java.io.IOException;
  * Created by jibe on 05/08/16.
  */
 @Component
-public class ShairportSyncImpl implements AirplayService{
-
-    private String serviceName;
+public class ShairportSyncImpl implements AirplayService {
 
     @Autowired
     private NativeCommand nativeCommand;
 
-    Thread thread;
+    @Autowired
+    PersistanceService persistanceService;
 
-    public void turnAirplayOn(final String serviceName) throws AirplayException {
+    private Thread thread;
+
+    public void turnAirplayOn() throws AirplayException {
+        final String serviceName = persistanceService.findAirplayServiceName();
         thread = new Thread() {
             @Override
             public void run() {

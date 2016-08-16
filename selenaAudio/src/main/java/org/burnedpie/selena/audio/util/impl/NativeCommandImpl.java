@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @Component()
 public class NativeCommandImpl implements NativeCommand {
 
-    Logger logger = Logger.getLogger(NativeCommandImpl.class.getName());
+    private final Logger logger = Logger.getLogger(NativeCommandImpl.class.getName());
 
     public String launchNativeCommandAndReturnInputStreamValue(String s) throws IOException {
         Process process = Runtime.getRuntime().exec(s);

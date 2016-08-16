@@ -10,6 +10,7 @@
     <bean id="nativeCommand" class="org.burnedpie.selena.audio.util.impl.NativeCommandImpl" />
     <bean id="radioService" class="org.burnedpie.selena.audio.impl.RadioServiceImpl" />
     <bean id="airplayService" class="org.burnedpie.selena.audio.integration.impl.ShairportDummyImpl" />
+    <bean id="volumeService" class="org.burnedpie.selena.audio.impl.VolumeServiceImpl" />
 
 
 </beans>

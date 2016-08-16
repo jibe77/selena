@@ -2,7 +2,9 @@ package org.burnedpie.selena.web.rest.controller;
 
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
+import org.burnedpie.selena.audio.VolumeService;
 import org.burnedpie.selena.audio.exception.RadioException;
+import org.burnedpie.selena.audio.exception.VolumeException;
 import org.burnedpie.selena.persistance.PersistanceService;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
@@ -13,9 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public class RemoteController {
 
     // selena audio dependencies
-    AirplayService airplayService;
-    RadioService radioService;
-    PersistanceService persistanceService;
+    private AirplayService      airplayService;
+    private RadioService        radioService;
+    private PersistanceService  persistanceService;
+    private VolumeService       volumeService;
 
     // global constants
     public static final String SUCCESS              =   "SUCCESS";
@@ -27,37 +30,47 @@ public class RemoteController {
 
     @RequestMapping(REST_STOP)
     ReturnValue stop() {
-        ReturnValue ReturnValue = new ReturnValue();
-        ReturnValue.setStatus(SUCCESS);
-        ReturnValue.setMessage(PLAYER_STOPPED);
-        return ReturnValue;
+        if (radioService.isRadioOn()) {
+            radioService.stopRadio();
+        }
+        if (airplayService.isAirplayOn()) {
+            airplayService.turnAirplayOff();
+        }
+        return new ReturnValue(SUCCESS, PLAYER_STOPPED);
     }
 
     // volume constants and method
-    public static final String VOLUME_TURNED_UP     =   "Volume is turned up.";
-    public static final String VOLUME_TURNED_DOWN   =   "Volume is turned down.";
-    public static final String REST_VOLUME_UP       =   "/volumeUp";
-    public static final String REST_VOLUME_DOWN     =   "/volumeDown";
+    public static final String VOLUME_TURNED_UP         =   "Volume is turned up.";
+    public static final String VOLUME_TURNED_DOWN       =   "Volume is turned down.";
+    public static final String VOLUME_TURNED_UP_FAIL    =   "Failed turning up the volume.";
+    public static final String VOLUME_TURNED_DOWN_FAIL  =   "Failed turning down the volume.";
+    public static final String REST_VOLUME_UP           =   "/volumeUp";
+    public static final String REST_VOLUME_DOWN         =   "/volumeDown";
 
     @RequestMapping(REST_VOLUME_UP)
     ReturnValue volumUp() {
-        ReturnValue ReturnValue = new ReturnValue();
-        ReturnValue.setStatus(SUCCESS);
-        ReturnValue.setMessage(VOLUME_TURNED_UP);
-        return ReturnValue;
+        try {
+            volumeService.volumeUp();
+            return new ReturnValue(SUCCESS, VOLUME_TURNED_UP);
+        } catch (VolumeException e) {
+            return new ReturnValue(FAIL, VOLUME_TURNED_UP_FAIL);
+        }
     }
 
     @RequestMapping(REST_VOLUME_DOWN)
     ReturnValue volumeDown() {
-        ReturnValue ReturnValue = new ReturnValue();
-        ReturnValue.setStatus(SUCCESS);
-        ReturnValue.setMessage(VOLUME_TURNED_DOWN);
-        return ReturnValue;
+        try {
+            volumeService.volumeDown();
+            return new ReturnValue(SUCCESS, VOLUME_TURNED_DOWN);
+        } catch (VolumeException e) {
+            return new ReturnValue(FAIL, VOLUME_TURNED_DOWN_FAIL);
+        }
     }
 
     // radio constants and methods
-    public static final String RADIO_STATION_SET         =   "Radio station set to {0}.";
+    public static final String RADIO_STATION_SET       =   "Radio station set to {0}.";
     public static final String REST_PLAY_RADIO_STATION =   "/playRadioStation";
+    public static final String RADIO_STATION_SET_FAIL  =   "Failed setting radio station to {0}";
 
     @RequestMapping(REST_PLAY_RADIO_STATION)
     ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
@@ -70,14 +83,13 @@ public class RemoteController {
         String url = persistanceService.findRadioStationUrlByIndex(radioStation);
         try {
             radioService.playRadioChannel(url);
+            return new ReturnValue(SUCCESS,
+                    RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
         } catch (RadioException e) {
-            airplayService.turnAirplayOn(persistanceService.findAirplayServiceName());
+            airplayService.turnAirplayOn();
+            return new ReturnValue(FAIL,
+                    RADIO_STATION_SET_FAIL.replace("{0}", String.valueOf(radioStation)));
         }
-
-        ReturnValue ReturnValue = new ReturnValue();
-        ReturnValue.setStatus(SUCCESS);
-        ReturnValue.setMessage(RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
-        return ReturnValue;
     }
 
     // airplay constants and methods
@@ -86,10 +98,7 @@ public class RemoteController {
 
     @RequestMapping(REST_START_AIRPLAY)
     ReturnValue startAirplay() {
-        ReturnValue ReturnValue = new ReturnValue();
-        ReturnValue.setStatus(SUCCESS);
-        ReturnValue.setMessage(AIRPLAY_STARTED);
-        return ReturnValue;
+        return new ReturnValue(SUCCESS, AIRPLAY_STARTED);
     }
 
     public AirplayService getAirplayService() {
@@ -114,6 +123,14 @@ public class RemoteController {
 
     public void setPersistanceService(PersistanceService persistanceService) {
         this.persistanceService = persistanceService;
+    }
+
+    public VolumeService getVolumeService() {
+        return volumeService;
+    }
+
+    public void setVolumeService(VolumeService volumeService) {
+        this.volumeService = volumeService;
     }
 
     /**

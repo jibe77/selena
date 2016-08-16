@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 public class TestNativeCommandIntegration {
 
-    Logger logger = Logger.getLogger(TestNativeCommandIntegration.class.getName());
+    private final Logger logger = Logger.getLogger(TestNativeCommandIntegration.class.getName());
 
     @Autowired
     private NativeCommand nativeCommand;

@@ -7,8 +7,22 @@ package org.burnedpie.selena.web.rest.controller;
  */
 public class ReturnValue {
 
-    private String message;
     private String status;
+    private String message;
+
+    public ReturnValue() {
+
+    }
+
+    public ReturnValue(String status, String message, String ... params) {
+        this.status = status;
+
+        for (int i = 0; i < params.length ; i++) {
+            message = message.replace("{" + i + "}", params[i]);
+        }
+
+        this.message = message;
+    }
 
     public void setStatus(String status) {
         this.status = status;

@@ -7,7 +7,6 @@ import java.io.IOException;
  */
 public interface NativeCommand {
 
-    public String launchNativeCommandAndReturnInputStreamValue(String s) throws IOException;
-
-    public int launchNativeCommandAndReturnExitValue(String s) throws IOException;
+    String launchNativeCommandAndReturnInputStreamValue(String s) throws IOException;
+    int launchNativeCommandAndReturnExitValue(String s) throws IOException;
 }

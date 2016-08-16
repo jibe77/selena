@@ -3,6 +3,7 @@ package org.burnedpie.selena.audio.integration;
 import org.burnedpie.selena.audio.AirplayService;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -33,12 +34,14 @@ public class TestAirplayIntegration {
         airplayService.turnAirplayOff();
     }
 
+    // TODO : repair integration test with db implementation.
+
     @Test
     public void testRadio() throws Exception {
         // given that
         String serviceName = "[selena]test-integration";
         // when
-        airplayService.turnAirplayOn(serviceName);
+        airplayService.turnAirplayOn();
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
