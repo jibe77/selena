@@ -5,7 +5,9 @@ import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.VolumeService;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
-import org.burnedpie.selena.persistance.PersistanceService;
+import org.burnedpie.selena.persistance.dao.RadioStationDAO;
+import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +17,13 @@ import org.springframework.web.bind.annotation.*;
 public class RemoteController {
 
     // selena audio dependencies
+    @Autowired
     private AirplayService      airplayService;
+    @Autowired
     private RadioService        radioService;
-    private PersistanceService  persistanceService;
+    @Autowired
+    private RadioStationDAO radioStationDAO;
+    @Autowired
     private VolumeService       volumeService;
 
     // global constants
@@ -80,9 +86,9 @@ public class RemoteController {
         if (radioService.isRadioOn()) {
             radioService.stopRadio();
         }
-        String url = persistanceService.findRadioStationUrlByIndex(radioStation);
+        RadioStation radioStationResult = radioStationDAO.findByChannel(radioStation);
         try {
-            radioService.playRadioChannel(url);
+            radioService.playRadioChannel(radioStationResult);
             return new ReturnValue(SUCCESS,
                     RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
         } catch (RadioException e) {
@@ -117,12 +123,12 @@ public class RemoteController {
         this.radioService = radioService;
     }
 
-    public PersistanceService getPersistanceService() {
-        return persistanceService;
+    public RadioStationDAO getRadioStationDAO() {
+        return radioStationDAO;
     }
 
-    public void setPersistanceService(PersistanceService persistanceService) {
-        this.persistanceService = persistanceService;
+    public void setRadioStationDAO(RadioStationDAO radioStationDAO) {
+        this.radioStationDAO = radioStationDAO;
     }
 
     public VolumeService getVolumeService() {

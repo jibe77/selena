@@ -11,9 +11,7 @@
     </parent>
 
     <!-- Ce module permet de fournir le service AirPlay -->
-
     <artifactId>selenaAudio</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <packaging>jar</packaging>
 
@@ -81,8 +79,33 @@
                         <excludedGroups>org.burnedpie.selena.audio.integration.IntegrationTest</excludedGroups>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${failsafe.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <groups>org.burnedpie.selena.audio.integration.IntegrationTest</groups>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <configuration>
+                                <includes>
+                                    <include>**/*.class</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
 </project>

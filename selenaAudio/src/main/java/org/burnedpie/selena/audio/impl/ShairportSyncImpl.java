@@ -4,10 +4,10 @@ import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
-import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
+import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
+import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.burnedpie.selena.persistance.PersistanceService;
 
 import java.io.IOException;
 
@@ -21,12 +21,12 @@ public class ShairportSyncImpl implements AirplayService {
     private NativeCommand nativeCommand;
 
     @Autowired
-    PersistanceService persistanceService;
+    ConfigurationDAO configurationDAO;
 
     private Thread thread;
 
     public void turnAirplayOn() throws AirplayException {
-        final String serviceName = persistanceService.findAirplayServiceName();
+        final String serviceName = configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME);
         thread = new Thread() {
             @Override
             public void run() {
@@ -48,4 +48,21 @@ public class ShairportSyncImpl implements AirplayService {
     public boolean isAirplayOn() {
         return thread != null && thread.isAlive();
     }
+
+    public ConfigurationDAO getConfigurationDAO() {
+        return configurationDAO;
+    }
+
+    public void setConfigurationDAO(ConfigurationDAO configurationDAO) {
+        this.configurationDAO = configurationDAO;
+    }
+
+    public NativeCommand getNativeCommand() {
+        return nativeCommand;
+    }
+
+    public void setNativeCommand(NativeCommand nativeCommand) {
+        this.nativeCommand = nativeCommand;
+    }
+
 }

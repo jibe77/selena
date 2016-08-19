@@ -1,3 +1,5 @@
+package org.burnedpie.selena.persistance.test.integration;
+
 import org.burnedpie.selena.persistance.dao.RadioStationDAO;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.hibernate.Session;
@@ -9,14 +11,23 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 /**
  * Created by jibe on 15/08/16.
  */
+@Category(IntegrationTest.class)
+@RunWith(value = SpringJUnit4ClassRunner.class)
+@TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
+@ContextConfiguration(locations = "spring-context-db-integration.xml")
 public class RadioStationDaoIntegrationTest {
 
     Logger logger = Logger.getLogger(RadioStationDaoIntegrationTest.class.getName());
@@ -25,7 +36,6 @@ public class RadioStationDaoIntegrationTest {
 
     @Autowired
     private RadioStationDAO radioStationDAO;
-    private int radioStationId;
 
     @Before
     public void setUp() {
@@ -42,6 +52,7 @@ public class RadioStationDaoIntegrationTest {
         } catch (Exception e) {
             // The registry would be destroyed by the SessionFactory, but we had trouble building the SessionFactory
             // so destroy it manually.
+            e.printStackTrace();
             StandardServiceRegistryBuilder.destroy( registry );
         }
     }

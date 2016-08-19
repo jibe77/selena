@@ -28,6 +28,7 @@
         <junit.version>4.12</junit.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <hibernate.version>5.2.1.Final</hibernate.version>
+        <failsafe.version>2.19.1</failsafe.version>
     </properties>
 
 </project>

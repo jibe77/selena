@@ -21,7 +21,6 @@
         - fournir une interface d'administration web
      -->
     <artifactId>selenaWeb</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -81,8 +80,36 @@
                     <excludedGroups>org.burnedpie.selena.web.rest.controller.IntegrationTest</excludedGroups>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit47</artifactId>
+                        <version>${surefire.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <groups>org.burnedpie.selena.web.rest.controller.IntegrationTest</groups>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>**/*.class</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+
 
     <dependencyManagement>
         <dependencies>

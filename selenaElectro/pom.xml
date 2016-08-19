@@ -12,9 +12,7 @@
             - le pilotage de la luminosité sur l'écran LED
 
     -->
-
     <artifactId>selenaElectro</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.burnedpie</groupId>

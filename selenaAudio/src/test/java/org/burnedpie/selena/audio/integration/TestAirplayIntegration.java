@@ -34,12 +34,10 @@ public class TestAirplayIntegration {
         airplayService.turnAirplayOff();
     }
 
-    // TODO : repair integration test with db implementation.
-
     @Test
     public void testRadio() throws Exception {
         // given that
-        String serviceName = "[selena]test-integration";
+
         // when
         airplayService.turnAirplayOn();
         try {

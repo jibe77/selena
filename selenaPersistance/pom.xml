@@ -5,9 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- ce module gère l'accès à la persistance des données, concernant notamment la configuration des stations -->
-
     <artifactId>selenaPersistance</artifactId>
-    <version>1.0-SNAPSHOT</version>
 
     <parent>
         <groupId>org.burnedpie</groupId>
@@ -54,5 +52,75 @@
             <version>${hibernate.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${surefire.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <includes>
+                            <include>**/*.class</include>
+                        </includes>
+                        <excludedGroups>org.burnedpie.selena.persistance.test.integration.IntegrationTest</excludedGroups>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${failsafe.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>${surefire.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <groups>org.burnedpie.selena.persistance.test.integration.IntegrationTest</groups>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                            </goals>
+                            <configuration>
+                                <includes>
+                                    <include>**/*.class</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

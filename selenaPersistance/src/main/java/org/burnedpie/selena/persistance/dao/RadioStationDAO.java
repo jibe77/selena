@@ -5,23 +5,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.springframework.stereotype.Repository;
 
 /**
- * Created by jibe on 15/08/16.
+ * Created by jibe on 18/08/16.
  */
+@Repository
 public class RadioStationDAO {
-
-    @Autowired
-    SessionFactory sessionFactory;
 
     public RadioStation findByChannel(int i) {
         Session session = sessionFactory.openSession();
@@ -30,6 +20,9 @@ public class RadioStationDAO {
         return radioStationQuery.getSingleResult();
     }
 
+    @Autowired
+    SessionFactory sessionFactory;
+
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
@@ -37,4 +30,5 @@ public class RadioStationDAO {
     public void setSessionFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
+
 }

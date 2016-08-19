@@ -3,6 +3,7 @@ package org.burnedpie.selena.audio.impl;
 import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
+import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +20,12 @@ public class RadioServiceImpl implements RadioService {
 
     Thread thread;
 
-    public void playRadioChannel(final String urlStream) {
+    public void playRadioChannel(final RadioStation radioStation) {
         thread = new Thread() {
             @Override
             public void run() {
                 try {
-                    nativeCommand.launchNativeCommandAndReturnExitValue("mplayer -playlist " + urlStream);
+                    nativeCommand.launchNativeCommandAndReturnExitValue("mplayer -playlist " + radioStation.getUrl());
                 } catch (IOException e) {
                     throw new RadioException(e);
                 }

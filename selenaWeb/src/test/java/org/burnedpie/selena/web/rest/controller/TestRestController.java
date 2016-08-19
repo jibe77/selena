@@ -3,29 +3,22 @@ package org.burnedpie.selena.web.rest.controller;
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.VolumeService;
-import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
-import org.burnedpie.selena.persistance.PersistanceService;
-import org.junit.After;
+import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
+import org.burnedpie.selena.persistance.dao.RadioStationDAO;
+import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
+import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.omg.CORBA.portable.ValueOutputStream;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Created by jibe on 13/08/16.
@@ -38,7 +31,8 @@ public class TestRestController {
     RemoteController    remoteController;
     AirplayService      mockAirplayService;
     RadioService        mockRadioService;
-    PersistanceService  mockPersistanceService;
+    ConfigurationDAO mockConfigurationDAO;
+    RadioStationDAO mockRadioStationDAO;
     VolumeService       mockVolumeService;
 
     @Before
@@ -47,12 +41,13 @@ public class TestRestController {
 
         mockAirplayService      = Mockito.mock(AirplayService.class);
         mockRadioService        = Mockito.mock(RadioService.class);
-        mockPersistanceService  = Mockito.mock(PersistanceService.class);
+        mockRadioStationDAO     = Mockito.mock(RadioStationDAO.class);
+        mockConfigurationDAO    = Mockito.mock(ConfigurationDAO.class);
         mockVolumeService       = Mockito.mock(VolumeService.class);
 
         remoteController.setAirplayService(mockAirplayService);
         remoteController.setRadioService(mockRadioService);
-        remoteController.setPersistanceService(mockPersistanceService);
+        remoteController.setRadioStationDAO(mockRadioStationDAO);
         remoteController.setVolumeService(mockVolumeService);
     }
 
@@ -60,9 +55,11 @@ public class TestRestController {
     public void testRemoteControllerPlayRadio() {
         // given that
         int station = 1;
+        RadioStation radioStation = new RadioStation();
+        radioStation.setUrl("http://test");
         Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
         Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
-        Mockito.when(mockPersistanceService.findRadioStationUrlByIndex(Mockito.anyInt())).thenReturn("http://test");
+        Mockito.when(mockRadioStationDAO.findByChannel(Mockito.anyInt())).thenReturn(radioStation);
 
         // when
         ReturnValue returnValue = remoteController.playRadioStation(station);
@@ -77,18 +74,20 @@ public class TestRestController {
         Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
         Mockito.verify(mockRadioService, Mockito.times(1)).stopRadio();
         // 3. lancer radio
-        Mockito.verify(mockRadioService, Mockito.times(1)).playRadioChannel(Mockito.anyString());
+        Mockito.verify(mockRadioService, Mockito.times(1)).playRadioChannel(radioStation);
     }
 
     @Test
     public void testRemoteControllerPlayRadioFail() {
         // given that
         int station = 1;
+        RadioStation radioStation = new RadioStation();
+        radioStation.setUrl("http://test");
         Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
         Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
-        Mockito.when(mockPersistanceService.findRadioStationUrlByIndex(Mockito.anyInt())).thenReturn("http://test");
-        Mockito.when(mockPersistanceService.findAirplayServiceName()).thenReturn("[selena]test");
-        Mockito.doThrow(new RadioException(new Exception())).when(mockRadioService).playRadioChannel(Mockito.anyString());
+        Mockito.when(mockRadioStationDAO.findByChannel(Mockito.anyInt())).thenReturn(radioStation);
+        Mockito.when(mockConfigurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME)).thenReturn("[selena]test");
+        Mockito.doThrow(new RadioException(new Exception())).when(mockRadioService).playRadioChannel(radioStation);
 
         // when
         ReturnValue returnValue = remoteController.playRadioStation(station);
@@ -103,7 +102,7 @@ public class TestRestController {
         Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
         Mockito.verify(mockRadioService, Mockito.times(1)).stopRadio();
         // 3. lancer radio
-        Mockito.verify(mockRadioService, Mockito.times(1)).playRadioChannel(Mockito.anyString());
+        Mockito.verify(mockRadioService, Mockito.times(1)).playRadioChannel(radioStation);
         // 4. si échoue, lancer airplay
         Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOn();
     }

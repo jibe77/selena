@@ -2,6 +2,7 @@ package org.burnedpie.selena.audio.integration;
 
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
+import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -35,9 +36,11 @@ public class TestRadioIntegration {
     @Test
     public void testRadio() throws Exception {
         // given that
-        String playlist = "http://www.listenlive.eu/europe1.m3u";
+        RadioStation radioStation = new RadioStation();
+        radioStation.setUrl("http://www.listenlive.eu/europe1.m3u");
+
         // when
-        radioService.playRadioChannel(playlist);
+        radioService.playRadioChannel(radioStation);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -50,9 +53,10 @@ public class TestRadioIntegration {
     @Test
     public void testRadioStop() throws Exception {
         // given that
-        String playlist = "http://www.listenlive.eu/europe1.m3u";
+        RadioStation radioStation = new RadioStation();
+        radioStation.setUrl("http://www.listenlive.eu/europe1.m3u");
         // when
-        radioService.playRadioChannel(playlist);
+        radioService.playRadioChannel(radioStation);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
