@@ -8,6 +8,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 @Category(IntegrationTest.class)
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
+@ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")
 public class TestIntegrationRestController {
 
     Logger logger = Logger.getLogger(TestIntegrationRestController.class.getName());

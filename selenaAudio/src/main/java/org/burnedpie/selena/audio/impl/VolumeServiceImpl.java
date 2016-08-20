@@ -5,12 +5,14 @@ import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
 import org.burnedpie.selena.audio.util.NativeCommand;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 /**
  * Created by jibe on 14/08/16.
  */
+@Component
 public class VolumeServiceImpl implements VolumeService {
 
     @Autowired

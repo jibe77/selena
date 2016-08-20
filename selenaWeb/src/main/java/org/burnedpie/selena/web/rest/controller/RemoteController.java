@@ -7,18 +7,31 @@ import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
 import org.burnedpie.selena.persistance.dao.RadioStationDAO;
 import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
 
 @RestController
 @EnableAutoConfiguration
+@ComponentScan(basePackages = {"org.burnedpie.selena.audio", "org.burnedpie.selena.persistance.dao"})
+
 public class RemoteController {
+
+    Logger logger = Logger.getLogger(RemoteController.class.getName());
 
     // selena audio dependencies
     @Autowired
     private AirplayService      airplayService;
+
     @Autowired
     private RadioService        radioService;
     @Autowired
@@ -59,6 +72,7 @@ public class RemoteController {
             volumeService.volumeUp();
             return new ReturnValue(SUCCESS, VOLUME_TURNED_UP);
         } catch (VolumeException e) {
+            logger.severe(e.getMessage());
             return new ReturnValue(FAIL, VOLUME_TURNED_UP_FAIL);
         }
     }
@@ -69,6 +83,7 @@ public class RemoteController {
             volumeService.volumeDown();
             return new ReturnValue(SUCCESS, VOLUME_TURNED_DOWN);
         } catch (VolumeException e) {
+            logger.severe(e.getMessage());
             return new ReturnValue(FAIL, VOLUME_TURNED_DOWN_FAIL);
         }
     }
@@ -92,6 +107,7 @@ public class RemoteController {
             return new ReturnValue(SUCCESS,
                     RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
         } catch (RadioException e) {
+            logger.severe(e.getMessage());
             airplayService.turnAirplayOn();
             return new ReturnValue(FAIL,
                     RADIO_STATION_SET_FAIL.replace("{0}", String.valueOf(radioStation)));
@@ -147,4 +163,11 @@ public class RemoteController {
         SpringApplication.run(RemoteController.class, args);
     }
 
+    @Bean
+    public SessionFactory sessionFactory(){
+        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+                .configure()
+                .build();
+        return new MetadataSources( registry ).buildMetadata().buildSessionFactory();
+    }
 }

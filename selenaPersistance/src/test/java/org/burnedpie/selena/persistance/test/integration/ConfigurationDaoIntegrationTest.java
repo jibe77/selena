@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 @Category(IntegrationTest.class)
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-@ContextConfiguration(locations = "spring-context-db-integration.xml")
+@ContextConfiguration(locations = "classpath:org/burnedpie/selena/persistance/test/integration/spring-context-db-integration.xml")
 public class ConfigurationDaoIntegrationTest {
 
     Logger logger = Logger.getLogger(ConfigurationDaoIntegrationTest.class.getName());

@@ -3,9 +3,11 @@ package org.burnedpie.selena.persistance.dao;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
+import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * Created by jibe on 18/08/16.
@@ -15,9 +17,14 @@ public class RadioStationDAO {
 
     public RadioStation findByChannel(int i) {
         Session session = sessionFactory.openSession();
-        Query<RadioStation> radioStationQuery = session.createQuery("FROM RadioStation WHERE channel=?1");
-        radioStationQuery.setParameter(1, i);
-        return radioStationQuery.getSingleResult();
+        Query radioStationQuery = session.createQuery("FROM RadioStation WHERE channel=:channel");
+        radioStationQuery.setParameter("channel", i);
+        List<RadioStation> c = radioStationQuery.list();
+        if (c != null && c.size() > 0) {
+            return c.get(radioStationQuery.getFirstResult());
+        } else {
+            return null;
+        }
     }
 
     @Autowired

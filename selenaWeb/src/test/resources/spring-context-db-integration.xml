@@ -8,6 +8,9 @@
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
     <context:component-scan base-package="org.burnedpie.selena.persistance.dao" />
+    <context:component-scan base-package="org.burnedpie.selena.audio" />
+    <context:component-scan base-package="org.burnedpie.selena.audio.impl" />
+    <context:component-scan base-package="org.burnedpie.selena.audio.util.impl" />
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="configLocation">
