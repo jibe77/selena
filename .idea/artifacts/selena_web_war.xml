@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="selena-web:war">
+    <output-path>$PROJECT_DIR$/selenaWeb/target</output-path>
+    <root id="archive" name="selenaWeb-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="selena-web:war exploded" />
+    </root>
+  </artifact>
+</component>

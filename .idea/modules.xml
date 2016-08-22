@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/selena.iml" filepath="$PROJECT_DIR$/selena.iml" />
+      <module fileurl="file://$PROJECT_DIR$/selenaAudio/selenaAudio.iml" filepath="$PROJECT_DIR$/selenaAudio/selenaAudio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/selenaElectro/selenaElectro.iml" filepath="$PROJECT_DIR$/selenaElectro/selenaElectro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/selenaPersistance/selenaPersistance.iml" filepath="$PROJECT_DIR$/selenaPersistance/selenaPersistance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/selenaWeb/selenaWeb.iml" filepath="$PROJECT_DIR$/selenaWeb/selenaWeb.iml" />
+    </modules>
+  </component>
+</project>

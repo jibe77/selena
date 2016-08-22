@@ -1,0 +1,35 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="selenaWeb:war exploded">
+    <output-path>$PROJECT_DIR$/selenaWeb/target/selenaWeb-1.0-SNAPSHOT</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="selenaWeb" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter:1.1.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot:1.1.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-context:4.0.6.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-aop:4.0.6.RELEASE" />
+          <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-beans:4.0.6.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-expression:4.0.6.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-autoconfigure:1.1.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-logging:1.1.4.RELEASE" />
+          <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.7.7" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.7" />
+          <element id="library" level="project" name="Maven: org.slf4j:jul-to-slf4j:1.7.7" />
+          <element id="library" level="project" name="Maven: org.slf4j:log4j-over-slf4j:1.7.7" />
+          <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.1.2" />
+          <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.1.2" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-core:4.0.6.RELEASE" />
+          <element id="library" level="project" name="Maven: org.yaml:snakeyaml:1.13" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/selenaWeb/target/selenaWeb-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="selenaWeb/web/Web" />
+    </root>
+  </artifact>
+</component>

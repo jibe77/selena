@@ -102,8 +102,8 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerPlayRadio() {
         // given that
-        int station = 1;
-        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
+        int channel = 1;
+        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
@@ -112,23 +112,23 @@ public class TestIntegrationRestController {
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
         Assert.assertEquals(
-                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(station)),
+                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(channel)),
                 returnValue.getMessage());
     }
 
     @Test
     public void testRemoteControllerPlayRadio10() {
         // given that
-        int station = 10;
-        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
+        int channel = 10;
+        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;
 
         // when
         ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
-        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.FAIL, returnValue.getStatus());
         Assert.assertEquals(
-                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(station)),
+                RemoteController.RADIO_STATION_UNDEFINED_FAIL.replace("{0}", String.valueOf(channel)),
                 returnValue.getMessage());
     }
 

@@ -87,28 +87,33 @@ public class RemoteController {
     }
 
     // radio constants and methods
-    public static final String RADIO_STATION_SET       =   "Radio station set to {0}.";
-    public static final String REST_PLAY_RADIO_STATION =   "/playRadioStation";
-    public static final String RADIO_STATION_SET_FAIL  =   "Failed setting radio station to {0}";
+    public static final String RADIO_STATION_SET            =   "Radio station set to {0}.";
+    public static final String REST_PLAY_RADIO_STATION      =   "/playRadioStation";
+    public static final String RADIO_STATION_SET_FAIL       =   "Failed setting radio station to {0}";
+    public static final String RADIO_STATION_UNDEFINED_FAIL =   "Failed setting radio station to {0}";
 
     @RequestMapping(REST_PLAY_RADIO_STATION)
-    ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer radioStation) {
+    ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer channel) {
         if (airplayService.isAirplayOn()) {
             airplayService.turnAirplayOff();
         }
         if (radioService.isRadioOn()) {
             radioService.stopRadio();
         }
-        RadioStation radioStationResult = radioStationDAO.findByChannel(radioStation);
+        RadioStation radioStationResult = radioStationDAO.findByChannel(channel);
         try {
+            if (radioStationResult == null) {
+                logger.info("Radio station not found :" + channel);
+                return new ReturnValue(FAIL, RADIO_STATION_UNDEFINED_FAIL.replace("{0}", String.valueOf(channel)));
+            }
             radioService.playRadioChannel(radioStationResult);
             return new ReturnValue(SUCCESS,
-                    RADIO_STATION_SET.replace("{0}", String.valueOf(radioStation)));
+                    RADIO_STATION_SET.replace("{0}", String.valueOf(channel)));
         } catch (RadioException e) {
             logger.severe(e.getMessage());
             airplayService.turnAirplayOn();
             return new ReturnValue(FAIL,
-                    RADIO_STATION_SET_FAIL.replace("{0}", String.valueOf(radioStation)));
+                    RADIO_STATION_SET_FAIL.replace("{0}", String.valueOf(channel)));
         }
     }
 
