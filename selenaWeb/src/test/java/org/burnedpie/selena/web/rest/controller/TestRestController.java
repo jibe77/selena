@@ -109,6 +109,37 @@ public class TestRestController {
     }
 
     @Test
+    public void testRemoteControllerPlayRadio10Fail() {
+        // given that
+        int channel = 10;
+        RadioStation radioStation = new RadioStation();
+        radioStation.setUrl("http://test");
+        Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
+        Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
+        Mockito.when(mockRadioStationDAO.findByChannel(Mockito.anyInt())).thenReturn(null);
+        Mockito.when(mockConfigurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME)).thenReturn("[selena]test");
+        Mockito.doThrow(new RadioException(new Exception())).when(mockRadioService).playRadioChannel(radioStation);
+
+        // when
+        ReturnValue returnValue = remoteController.playRadioStation(channel);
+
+        // then
+        Assert.assertEquals(RemoteController.FAIL, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.RADIO_STATION_UNDEFINED_FAIL.replace("{0}", String.valueOf(channel)), returnValue.getMessage());
+        // 1. si airplay, couper airplay
+        Mockito.verify(mockAirplayService, Mockito.times(1)).isAirplayOn();
+        Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOff();
+        // 2. si radio, couper radio
+        Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
+        Mockito.verify(mockRadioService, Mockito.times(1)).stopRadio();
+        // 3. lancer radio
+        Mockito.verify(mockRadioService, Mockito.times(0)).playRadioChannel(radioStation);
+        // 4. si échoue, lancer airplay
+        Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOn();
+    }
+
+
+    @Test
     public void testRemoteControllerStop() {
         // given that
         Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);

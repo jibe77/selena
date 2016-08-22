@@ -33,7 +33,7 @@ public class RemoteController {
     @Autowired
     private RadioService        radioService;
     @Autowired
-    private RadioStationDAO radioStationDAO;
+    private RadioStationDAO     radioStationDAO;
     @Autowired
     private VolumeService       volumeService;
 
@@ -104,6 +104,7 @@ public class RemoteController {
         try {
             if (radioStationResult == null) {
                 logger.info("Radio station not found :" + channel);
+                airplayService.turnAirplayOn();
                 return new ReturnValue(FAIL, RADIO_STATION_UNDEFINED_FAIL.replace("{0}", String.valueOf(channel)));
             }
             radioService.playRadioChannel(radioStationResult);
