@@ -1,19 +1,29 @@
 package org.burnedpie.selena.web.rest.controller;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
+import org.burnedpie.selena.persistance.dao.RadioStationDAO;
+import org.burnedpie.selena.persistance.domain.Configuration;
+import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
+import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Logger;
 
 /**
@@ -24,18 +34,62 @@ import java.util.logging.Logger;
 @RunWith(value = SpringJUnit4ClassRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")
+@SpringBootTest(classes = RemoteController.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestIntegrationRestController {
 
     Logger logger = Logger.getLogger(TestIntegrationRestController.class.getName());
 
     ConfigurableApplicationContext configurableApplicationContext;
 
-    private static final String APPLICATION_URL = "http://localhost:8080";
+    @LocalServerPort
+    private int port;
+
+    private URL base;
+    private TestRestTemplate template;
+
+    @Autowired
+    RadioStationDAO radioStationDAO;
+
+    @Autowired
+    ConfigurationDAO configurationDAO;
 
     @Before
-    public void setUp() {
-        configurableApplicationContext =
-                SpringApplication.run(RemoteController.class);
+    public void setUp() throws MalformedURLException {
+        this.base = new URL("http://localhost:" + port + "/");
+        template = new TestRestTemplate();
+
+        if (radioStationDAO.findByChannel(1) == null) {
+            RadioStation radioStation = new RadioStation();
+            radioStation.setName("Europe1");
+            radioStation.setUrl("http://e1-live-mp3-128.scdn.arkena.com/europe1.mp3");
+            radioStation.setChannel(1);
+            radioStationDAO.saveRadioStation(radioStation);
+        }
+
+        if (configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME) == null) {
+            Configuration configuration = new Configuration();
+            configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
+            configuration.setConfigValue("[selena]integration-test");
+            configurationDAO.saveConfiguration(configuration);
+        }
+
+        if (configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND) == null) {
+            Configuration configuration = new Configuration();
+            configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND);
+            configuration.setConfigValue("echo volume_up");
+            configurationDAO.saveConfiguration(configuration);
+        }
+
+        if (configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND) == null) {
+            Configuration configuration = new Configuration();
+            configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND);
+            configuration.setConfigValue("echo volume_down");
+            configurationDAO.saveConfiguration(configuration);
+        }
+
+        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME));
+        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND));
+        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND));
     }
 
     @After
@@ -49,7 +103,7 @@ public class TestIntegrationRestController {
     public void testRemoteControllerPlayRadio() {
         // given that
         int station = 1;
-        String url = APPLICATION_URL + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
+        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
 
         // when
         RestTemplate restTemplate = new RestTemplate();
@@ -66,11 +120,10 @@ public class TestIntegrationRestController {
     public void testRemoteControllerPlayRadio10() {
         // given that
         int station = 10;
-        String url = APPLICATION_URL + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
+        String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + station;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -82,11 +135,10 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerStartAirplay() {
         // given that
-        String url = APPLICATION_URL + RemoteController.REST_START_AIRPLAY;
+        String url = base + RemoteController.REST_START_AIRPLAY;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -96,11 +148,10 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerStop() {
         // given that
-        String url = APPLICATION_URL + RemoteController.REST_STOP;
+        String url = base + RemoteController.REST_STOP;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -110,11 +161,10 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerVolumeUp() {
         // given that
-        String url = APPLICATION_URL + RemoteController.REST_VOLUME_UP;
+        String url = base + RemoteController.REST_VOLUME_UP;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -124,11 +174,10 @@ public class TestIntegrationRestController {
     @Test
     public void testRemoteControllerVolumeDown() {
         // given that
-        String url = APPLICATION_URL + RemoteController.REST_VOLUME_DOWN;
+        String url = base + RemoteController.REST_VOLUME_DOWN;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());

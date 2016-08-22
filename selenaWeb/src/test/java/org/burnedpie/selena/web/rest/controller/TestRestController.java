@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -182,5 +183,60 @@ public class TestRestController {
         Assert.assertEquals(RemoteController.FAIL, returnValue.getStatus());
         Assert.assertEquals(RemoteController.VOLUME_TURNED_DOWN_FAIL, returnValue.getMessage());
         Mockito.verify(mockVolumeService, Mockito.times(1)).volumeDown();
+    }
+
+    @Test
+    public void testRemoteControllerStartAirplay() {
+        // given that
+        Mockito.when(mockRadioService.isRadioOn()).thenReturn(false);
+        Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(false);
+
+        // when
+        ReturnValue returnValue = remoteController.startAirplay();
+
+        // then
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValue.getMessage());
+        Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
+        Mockito.verify(mockAirplayService, Mockito.times(1)).isAirplayOn();
+        Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOn();
+    }
+
+    @Test
+    public void testRemoteControllerStartAirplayAlreadyOn() {
+        // given that
+        Mockito.when(mockRadioService.isRadioOn()).thenReturn(false);
+        Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
+
+        // when
+        ReturnValue returnValue = remoteController.startAirplay();
+
+        // then
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STARTED, returnValue.getMessage());
+        Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
+        Mockito.verify(mockRadioService, Mockito.times(0)).stopRadio();
+        Mockito.verify(mockAirplayService, Mockito.times(1)).isAirplayOn();
+        Mockito.verify(mockAirplayService, Mockito.times(0)).turnAirplayOn();
+    }
+
+
+    @Test
+    public void testRemoteControllerStartAirplayAlreadyPlayingRadio() {
+        // given that
+        Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
+        Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(false);
+
+        // when
+        ReturnValue returnValue = remoteController.startAirplay();
+
+        // then
+        Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValue.getMessage());
+        Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
+        Mockito.verify(mockRadioService, Mockito.times(1)).stopRadio();
+
+        Mockito.verify(mockAirplayService, Mockito.times(1)).isAirplayOn();
+        Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOn();
     }
 }

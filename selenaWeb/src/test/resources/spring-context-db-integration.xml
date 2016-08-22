@@ -13,10 +13,14 @@
     <context:component-scan base-package="org.burnedpie.selena.audio.util.impl" />
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="configLocation">
-            <value>
-                classpath:hibernate.cfg.xml
-            </value>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.connection.url">jdbc:derby:testdb-integration-test;create=true</prop>
+                <prop key="hibernate.connection.driver_class">org.apache.derby.jdbc.EmbeddedDriver</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.DerbyTenSevenDialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
         </property>
         <property name="packagesToScan">
             <value>org.burnedpie.selena.persistance.domain</value>

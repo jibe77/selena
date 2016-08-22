@@ -28,10 +28,8 @@ public class RemoteController {
 
     Logger logger = Logger.getLogger(RemoteController.class.getName());
 
-    // selena audio dependencies
     @Autowired
     private AirplayService      airplayService;
-
     @Autowired
     private RadioService        radioService;
     @Autowired
@@ -115,12 +113,21 @@ public class RemoteController {
     }
 
     // airplay constants and methods
-    public static final String AIRPLAY_STARTED      =   "Airplay is started.";
-    public static final String REST_START_AIRPLAY   =   "/startAirplay";
+    public static final String AIRPLAY_STARTED          =   "Airplay is started.";
+    public static final String AIRPLAY_ALREADY_STARTED  =   "Airplay is already started.";
+    public static final String REST_START_AIRPLAY       =   "/startAirplay";
 
     @RequestMapping(REST_START_AIRPLAY)
     ReturnValue startAirplay() {
-        return new ReturnValue(SUCCESS, AIRPLAY_STARTED);
+        if (radioService.isRadioOn()) {
+            radioService.stopRadio();
+        }
+        if (airplayService.isAirplayOn()) {
+            return new ReturnValue(SUCCESS, AIRPLAY_ALREADY_STARTED);
+        } else {
+            airplayService.turnAirplayOn();
+            return new ReturnValue(SUCCESS, AIRPLAY_STARTED);
+        }
     }
 
     public AirplayService getAirplayService() {

@@ -1,9 +1,8 @@
 package org.burnedpie.selena.persistance.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  * Created by jibe on 15/08/16.
@@ -13,8 +12,12 @@ import javax.persistence.Table;
 public class Configuration {
 
     @Id
-    @Column(name = "CONFIG_KEY", nullable = false)
-    private String configKey;
+    @GeneratedValue(generator="increment")
+    @GenericGenerator(name="increment", strategy = "increment")
+    private int id;
+
+    @Column(name = "CONFIG_KEY", nullable = false, unique = true)
+    private ConfigurationKeyEnum configKey;
 
     @Column(name = "CONFIG_VALUE")
     private String configValue;
@@ -27,11 +30,19 @@ public class Configuration {
         this.configValue = configValue;
     }
 
-    public String getConfigKey() {
+    public ConfigurationKeyEnum getConfigKey() {
         return configKey;
     }
 
-    public void setConfigKey(String configKey) {
+    public void setConfigKey(ConfigurationKeyEnum configKey) {
         this.configKey = configKey;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

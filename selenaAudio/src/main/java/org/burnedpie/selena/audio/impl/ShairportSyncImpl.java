@@ -1,5 +1,6 @@
 package org.burnedpie.selena.audio.impl;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
@@ -10,12 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Created by jibe on 05/08/16.
  */
 @Component
 public class ShairportSyncImpl implements AirplayService {
+
+    private Logger logger = Logger.getLogger(ShairportSyncImpl.class.getName());
 
     @Autowired
     private NativeCommand nativeCommand;
@@ -32,7 +36,9 @@ public class ShairportSyncImpl implements AirplayService {
             public void run() {
                 try {
                     nativeCommand.launchNativeCommandAndReturnInputStreamValue("shairport-sync -a " + serviceName + " -- -c \"PCM\"");
-                } catch (IOException e) {
+                } catch (IOException | NullPointerException e) {
+                    logger.severe(e.getMessage());
+                    logger.severe(ExceptionUtils.getStackTrace(e));
                     throw new RadioException(e);
                 }
             }

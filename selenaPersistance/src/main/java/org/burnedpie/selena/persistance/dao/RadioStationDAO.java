@@ -4,9 +4,12 @@ import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -20,8 +23,9 @@ public class RadioStationDAO {
         Query radioStationQuery = session.createQuery("FROM RadioStation WHERE channel=:channel");
         radioStationQuery.setParameter("channel", i);
         List<RadioStation> c = radioStationQuery.list();
-        if (c != null && c.size() > 0) {
-            return c.get(radioStationQuery.getFirstResult());
+        session.close();
+        if (c != null && !c.isEmpty()) {
+            return c.iterator().next();
         } else {
             return null;
         }
@@ -38,4 +42,12 @@ public class RadioStationDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    public RadioStation saveRadioStation(RadioStation radioStation) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        RadioStation persistedRadioStation = (RadioStation) session.merge(radioStation);
+        transaction.commit();
+        session.close();
+        return persistedRadioStation;
+    }
 }

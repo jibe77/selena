@@ -5,9 +5,11 @@ import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,11 +19,12 @@ import java.util.List;
 public class ConfigurationDAO {
     public String findByKey(ConfigurationKeyEnum key) {
         Session session = sessionFactory.openSession();
-        Query confQuery = session.createQuery("FROM Configuration WHERE configKey=?1");
-        confQuery.setParameter(1, key.name());
+        Query confQuery = session.createQuery("FROM Configuration WHERE configKey=:key");
+        confQuery.setParameter("key", key);
         List<Configuration> c = confQuery.list();
-        if (c != null && c.size() > 0) {
-            return c.get(confQuery.getFirstResult()).getConfigValue();
+        session.close();
+        if (c != null && !c.isEmpty()) {
+            return c.iterator().next().getConfigValue();
         } else {
             return null;
         }
@@ -38,4 +41,12 @@ public class ConfigurationDAO {
         this.sessionFactory = sessionFactory;
     }
 
+    public Configuration saveConfiguration(Configuration configuration) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        Configuration conf = (Configuration) session.merge(configuration);
+        transaction.commit();
+        session.close();
+        return conf;
+    }
 }

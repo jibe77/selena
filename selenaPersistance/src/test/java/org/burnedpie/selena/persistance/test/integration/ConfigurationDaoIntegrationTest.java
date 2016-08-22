@@ -62,7 +62,7 @@ public class ConfigurationDaoIntegrationTest {
         Transaction t = session.beginTransaction();
 
         Configuration configuration = new Configuration();
-        configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name());
+        configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
         configuration.setConfigValue("[selena]test");
         session.save(configuration);
 

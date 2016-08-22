@@ -22,7 +22,7 @@ public class RadioStation {
     @Column(name = "URL")
     private String url;
 
-    @Column(name = "CHANNEL")
+    @Column(name = "CHANNEL", unique = true)
     private int channel;
 
     public int getId() {

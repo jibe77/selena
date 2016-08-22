@@ -7,4 +7,8 @@ public class VolumeException extends RuntimeException {
     public VolumeException(Exception e) {
         super(e);
     }
+
+    public VolumeException(String message) {
+        super(message);
+    }
 }
