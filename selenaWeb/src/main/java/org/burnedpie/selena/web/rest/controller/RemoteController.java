@@ -21,9 +21,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.logging.Logger;
 
 @RestController
-@EnableAutoConfiguration
-@ComponentScan(basePackages = {"org.burnedpie.selena.audio", "org.burnedpie.selena.persistance.dao"})
-
+//@EnableAutoConfiguration
+//@ComponentScan(basePackages = {"org.burnedpie.selena.audio", "org.burnedpie.selena.persistance.dao"})
 public class RemoteController {
 
     Logger logger = Logger.getLogger(RemoteController.class.getName());
@@ -166,14 +165,6 @@ public class RemoteController {
 
     public void setVolumeService(VolumeService volumeService) {
         this.volumeService = volumeService;
-    }
-
-    /**
-     * Starts web server, for test purpose.
-     * @param args
-     */
-    public static void main(String[] args) {
-        SpringApplication.run(RemoteController.class, args);
     }
 
     @Bean
