@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 /**
  * Created by jibe on 15/08/16.
  */
-@Category(IntegrationTest.class)
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")

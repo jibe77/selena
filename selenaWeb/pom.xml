@@ -69,7 +69,9 @@
                     <includes>
                         <include>**/*.class</include>
                     </includes>
-                    <excludedGroups>org.burnedpie.selena.integration.IntegrationTest</excludedGroups>
+                    <excludes>
+                        <exclude>**/*IntegrationTest.class</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -82,9 +84,6 @@
                         <version>${surefire.version}</version>
                     </dependency>
                 </dependencies>
-                <configuration>
-                    <groups>org.burnedpie.selena.integration.IntegrationTest</groups>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -92,7 +91,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>**/*.class</include>
+                                <include>**/*IntegrationTest.class</include>
                             </includes>
                         </configuration>
                     </execution>
