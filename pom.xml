@@ -4,6 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.4.0.RELEASE</version>
+    </parent>
+
     <groupId>org.burnedpie</groupId>
     <artifactId>selena</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -17,16 +23,13 @@
     </modules>
 
     <properties>
-        <!-- TODO : remove libraries already imported by spring boot. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <spring.version>4.3.2.RELEASE</spring.version>
         <spring-boot.version>1.4.0.RELEASE</spring-boot.version>
         <surefire.version>2.14.1</surefire.version>
         <mockito.version>2.0.101-beta</mockito.version>
         <derby.version>10.7.1.1</derby.version>
         <pi4j.version>1.1</pi4j.version>
-        <junit.version>4.12</junit.version>
         <commons-lang3.version>3.4</commons-lang3.version>
         <hibernate.version>5.0.9.Final</hibernate.version>
         <failsafe.version>2.19.1</failsafe.version>

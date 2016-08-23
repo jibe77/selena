@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ import java.io.IOException;
  * Created by jibe on 13/08/16.
  *
  */
-@RunWith(value = SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 public class TestRestController {
 

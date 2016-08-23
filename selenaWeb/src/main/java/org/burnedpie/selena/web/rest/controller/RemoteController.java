@@ -12,17 +12,14 @@ import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
 
 @RestController
-//@EnableAutoConfiguration
-//@ComponentScan(basePackages = {"org.burnedpie.selena.audio", "org.burnedpie.selena.persistance.dao"})
+@EnableAutoConfiguration
 public class RemoteController {
 
     Logger logger = Logger.getLogger(RemoteController.class.getName());

@@ -1,4 +1,4 @@
-package org.burnedpie.selena.persistance.test.integration;
+package org.burnedpie.selena.integration;
 
 import org.burnedpie.selena.persistance.dao.RadioStationDAO;
 import org.burnedpie.selena.persistance.domain.RadioStation;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.logging.Logger;
@@ -25,9 +26,9 @@ import java.util.logging.Logger;
  * Created by jibe on 15/08/16.
  */
 @Category(IntegrationTest.class)
-@RunWith(value = SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-@ContextConfiguration(locations = "spring-context-db-integration.xml")
+@ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")
 public class RadioStationDaoIntegrationTest {
 
     Logger logger = Logger.getLogger(RadioStationDaoIntegrationTest.class.getName());

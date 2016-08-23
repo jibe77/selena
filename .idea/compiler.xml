@@ -62,7 +62,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="selena" target="1.5" />
+      <module name="selena" target="1.8" />
       <module name="selenaAudio" target="1.8" />
       <module name="selenaElectro" target="1.8" />
       <module name="selenaPersistance" target="1.8" />

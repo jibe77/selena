@@ -1,25 +1,25 @@
-package org.burnedpie.selena.web.rest.controller;
+package org.burnedpie.selena.integration;
 
 import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
 import org.burnedpie.selena.persistance.dao.RadioStationDAO;
 import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.burnedpie.selena.web.rest.controller.RemoteController;
+import org.burnedpie.selena.web.rest.controller.ReturnValue;
 import org.junit.*;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.MalformedURLException;
@@ -31,13 +31,13 @@ import java.util.logging.Logger;
  *
  */
 @Category(IntegrationTest.class)
-@RunWith(value = SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")
 @SpringBootTest(classes = RemoteController.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TestIntegrationRestController {
+public class RestControllerIntegrationTest {
 
-    Logger logger = Logger.getLogger(TestIntegrationRestController.class.getName());
+    Logger logger = Logger.getLogger(RestControllerIntegrationTest.class.getName());
 
     ConfigurableApplicationContext configurableApplicationContext;
 
