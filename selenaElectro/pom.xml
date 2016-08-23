@@ -26,6 +26,13 @@
             <artifactId>pi4j-core</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

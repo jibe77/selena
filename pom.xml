@@ -17,6 +17,7 @@
 
 
     <modules>
+        <module>selenaElectro</module>
         <module>selenaPersistance</module>
         <module>selenaAudio</module>
         <module>selenaWeb</module>

@@ -9,6 +9,8 @@ import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
 import org.burnedpie.selena.persistance.dao.RadioStationDAO;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.burnedpie.selena.web.rest.controller.RemoteController;
+import org.burnedpie.selena.web.rest.controller.ReturnValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,7 @@ import java.io.IOException;
  */
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-public class TestRestController {
+public class RestControllerTest {
 
     RemoteController    remoteController;
     AirplayService      mockAirplayService;

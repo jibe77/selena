@@ -1,12 +1,13 @@
 package org.burnedpie.selena.web.rest.controller;
 
+import org.burnedpie.selena.web.rest.controller.ReturnValue;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Created by jibe on 13/08/16.
  */
-public class TestRestReturnValue {
+public class RestReturnValueTest {
 
     @Test
     public void testReturnValueToString() {
