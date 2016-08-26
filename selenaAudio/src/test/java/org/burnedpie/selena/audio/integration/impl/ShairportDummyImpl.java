@@ -4,7 +4,7 @@ import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
-import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
+import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,12 +21,12 @@ public class ShairportDummyImpl implements AirplayService {
     private NativeCommand nativeCommand;
 
     @Autowired
-    ConfigurationDAO configurationDAO;
+    ConfigurationRepository configurationRepository;
 
     private Thread thread;
 
     public void turnAirplayOn() throws AirplayException {
-        final String serviceName = configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME);
+        final String serviceName = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
         thread = new Thread() {
             @Override
             public void run() {

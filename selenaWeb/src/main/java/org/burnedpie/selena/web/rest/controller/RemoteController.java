@@ -5,15 +5,10 @@ import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.VolumeService;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
-import org.burnedpie.selena.persistance.dao.RadioStationDAO;
+import org.burnedpie.selena.persistance.dao.RadioStationRepository;
 import org.burnedpie.selena.persistance.domain.RadioStation;
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.logging.Logger;
@@ -25,13 +20,13 @@ public class RemoteController {
     Logger logger = Logger.getLogger(RemoteController.class.getName());
 
     @Autowired
+    private VolumeService       volumeService;
+    @Autowired
     private AirplayService      airplayService;
     @Autowired
     private RadioService        radioService;
     @Autowired
-    private RadioStationDAO     radioStationDAO;
-    @Autowired
-    private VolumeService       volumeService;
+    private RadioStationRepository radioStationDAO;
 
     // global constants
     public static final String SUCCESS              =   "SUCCESS";
@@ -148,11 +143,11 @@ public class RemoteController {
         this.radioService = radioService;
     }
 
-    public RadioStationDAO getRadioStationDAO() {
+    public RadioStationRepository getRadioStationDAO() {
         return radioStationDAO;
     }
 
-    public void setRadioStationDAO(RadioStationDAO radioStationDAO) {
+    public void setRadioStationDAO(RadioStationRepository radioStationDAO) {
         this.radioStationDAO = radioStationDAO;
     }
 
@@ -164,11 +159,5 @@ public class RemoteController {
         this.volumeService = volumeService;
     }
 
-    @Bean
-    public SessionFactory sessionFactory(){
-        final StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
-                .configure()
-                .build();
-        return new MetadataSources( registry ).buildMetadata().buildSessionFactory();
-    }
+
 }

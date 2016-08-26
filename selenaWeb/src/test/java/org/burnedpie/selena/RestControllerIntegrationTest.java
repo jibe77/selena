@@ -1,23 +1,28 @@
-package org.burnedpie.selena.integration;
+package org.burnedpie.selena;
 
-import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
-import org.burnedpie.selena.persistance.dao.RadioStationDAO;
+import org.burnedpie.selena.audio.impl.RadioServiceImpl;
+import org.burnedpie.selena.audio.impl.ShairportSyncImpl;
+import org.burnedpie.selena.audio.impl.VolumeServiceImpl;
+import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
+import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
+import org.burnedpie.selena.persistance.dao.RadioStationRepository;
 import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.burnedpie.selena.web.rest.controller.RemoteController;
 import org.burnedpie.selena.web.rest.controller.ReturnValue;
-import org.junit.*;
-import org.junit.experimental.categories.Category;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.web.client.RestTemplate;
@@ -32,13 +37,18 @@ import java.util.logging.Logger;
  */
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-@ContextConfiguration(locations = "classpath:spring-context-db-integration.xml")
-@SpringBootTest(classes = RemoteController.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {
+        RemoteController.class,
+        VolumeServiceImpl.class,
+        NativeCommandImpl.class,
+        ShairportSyncImpl.class,
+        RadioServiceImpl.class,
+        ConfigurationRepository.class,
+        RadioStationRepository.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@EnableAutoConfiguration
 public class RestControllerIntegrationTest {
 
     Logger logger = Logger.getLogger(RestControllerIntegrationTest.class.getName());
-
-    ConfigurableApplicationContext configurableApplicationContext;
 
     @LocalServerPort
     private int port;
@@ -47,10 +57,10 @@ public class RestControllerIntegrationTest {
     private TestRestTemplate template;
 
     @Autowired
-    RadioStationDAO radioStationDAO;
+    RadioStationRepository radioStationDAO;
 
     @Autowired
-    ConfigurationDAO configurationDAO;
+    ConfigurationRepository configurationDAO;
 
     @Before
     public void setUp() throws MalformedURLException {
@@ -62,40 +72,33 @@ public class RestControllerIntegrationTest {
             radioStation.setName("Europe1");
             radioStation.setUrl("http://e1-live-mp3-128.scdn.arkena.com/europe1.mp3");
             radioStation.setChannel(1);
-            radioStationDAO.saveRadioStation(radioStation);
+            radioStationDAO.save(radioStation);
         }
 
-        if (configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
             configuration.setConfigValue("[selena]integration-test");
-            configurationDAO.saveConfiguration(configuration);
+            configurationDAO.save(configuration);
         }
 
-        if (configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND);
             configuration.setConfigValue("echo volume_up");
-            configurationDAO.saveConfiguration(configuration);
+            configurationDAO.save(configuration);
         }
 
-        if (configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND);
             configuration.setConfigValue("echo volume_down");
-            configurationDAO.saveConfiguration(configuration);
+            configurationDAO.save(configuration);
         }
 
-        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.AIRPLAY_NAME));
-        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND));
-        Assert.assertNotNull(configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND));
-    }
-
-    @After
-    public void tearDown() {
-        if (configurableApplicationContext != null)
-            configurableApplicationContext.close();
-
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME));
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND));
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND));
     }
 
     @Test

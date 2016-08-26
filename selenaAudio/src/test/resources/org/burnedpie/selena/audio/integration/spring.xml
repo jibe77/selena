@@ -11,6 +11,6 @@
     <bean id="radioService" class="org.burnedpie.selena.audio.impl.RadioServiceImpl" />
     <bean id="airplayService" class="org.burnedpie.selena.audio.integration.impl.ShairportDummyImpl" />
     <bean id="volumeService" class="org.burnedpie.selena.audio.impl.VolumeServiceImpl" />
-    <bean id="configurationDAO" class="org.burnedpie.selena.persistance.dao.ConfigurationDAO" />
+    <bean id="configurationRepository" class="org.burnedpie.selena.persistance.dao.ConfigurationRepository" />
 
 </beans>

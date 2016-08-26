@@ -3,18 +3,19 @@ package org.burnedpie.selena.persistance.domain;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by jibe on 15/08/16.
  */
 @Entity
 @Table(name="RADIO_STATION")
-public class RadioStation {
+public class RadioStation implements Serializable {
 
     @Id
-    @GeneratedValue(generator="increment")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @GenericGenerator(name="increment", strategy = "increment")
-    private int id;
+    private Long id;
 
     @Column(name = "NAME")
     private String name;
@@ -25,11 +26,20 @@ public class RadioStation {
     @Column(name = "CHANNEL", unique = true)
     private int channel;
 
-    public int getId() {
+    public RadioStation() {
+    }
+
+    public RadioStation(String name, String url, int channel) {
+        this.name = name;
+        this.url = url;
+        this.channel = channel;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -55,5 +65,15 @@ public class RadioStation {
 
     public void setChannel(int channel) {
         this.channel = channel;
+    }
+
+    @Override
+    public String toString() {
+        return "RadioStation{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", url='" + url + '\'' +
+                ", channel=" + channel +
+                '}';
     }
 }

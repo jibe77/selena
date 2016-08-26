@@ -2,10 +2,9 @@ package org.burnedpie.selena.audio.impl;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.burnedpie.selena.audio.VolumeService;
-import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.exception.VolumeException;
 import org.burnedpie.selena.audio.util.NativeCommand;
-import org.burnedpie.selena.persistance.dao.ConfigurationDAO;
+import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,11 +24,11 @@ public class VolumeServiceImpl implements VolumeService {
     NativeCommand nativeCommand;
 
     @Autowired
-    ConfigurationDAO configurationDAO;
+    ConfigurationRepository configurationRepository;
 
     public void volumeUp() {
         try {
-            String value = configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND);
+            String value = configurationRepository.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND).getConfigValue();
             if (value == null) {
                 throw new VolumeException("Volume up command is undefined.");
             }
@@ -43,7 +42,7 @@ public class VolumeServiceImpl implements VolumeService {
 
     public void volumeDown() {
         try {
-            String value = configurationDAO.findByKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND);
+            String value = configurationRepository.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND).getConfigValue();
             if (value == null) {
                 throw new VolumeException("Volume down command is undefined.");
             }
