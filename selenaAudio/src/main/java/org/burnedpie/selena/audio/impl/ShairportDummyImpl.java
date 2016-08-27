@@ -7,21 +7,22 @@ import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
- * Created by jibe on 05/08/16.
+ * Created by jibe on 11/08/16.
  */
 @Component
 @Scope("singleton")
-public class ShairportSyncImpl implements AirplayService {
+public class ShairportDummyImpl implements AirplayService {
 
-    private Logger logger = Logger.getLogger(ShairportSyncImpl.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ShairportDummyImpl.class);
 
     @Autowired
     private NativeCommand nativeCommand;
@@ -30,8 +31,9 @@ public class ShairportSyncImpl implements AirplayService {
     ConfigurationRepository configurationRepository;
 
     private Thread thread;
-    private Process process;
+    Process process;
 
+    @Override
     public void turnAirplayOn() throws AirplayException {
         final String serviceName = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
         if (serviceName == null) {
@@ -42,19 +44,25 @@ public class ShairportSyncImpl implements AirplayService {
             @Override
             public void run() {
                 try {
-                    String commandLine = "shairport-sync -a " + serviceName + " -- -c \"PCM\"";
-                    logger.info("Starting shairport-sync with command line " + commandLine);
+                    String commandLine = "shairport -a " + serviceName + " -- -c \"PCM\"";
+                    logger.info("launching shairport with command " + commandLine + " ...");
+                    // command is different because shairport-sync doesn't exist on my local machine
                     process = nativeCommand.launchNativeCommandAndReturnProcess(commandLine);
                     String returnValue = nativeCommand.readProcessAndReturnInputStreamValue(process);
-                    logger.info("shairport-sync is finished with return value " + returnValue);
-                } catch (IOException | NullPointerException e) {
-                    logger.severe(e.getMessage());
-                    logger.severe(ExceptionUtils.getStackTrace(e));
-                    throw new RadioException(e);
+                    logger.info("shairport is finished with return value " + returnValue + ".");
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                    logger.error(ExceptionUtils.getStackTrace(e));
+                    throw new AirplayException(e);
                 }
             }
         };
         thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void turnAirplayOff() {

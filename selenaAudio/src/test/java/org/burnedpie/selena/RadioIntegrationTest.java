@@ -1,13 +1,14 @@
-package org.burnedpie.selena.audio.integration;
+package org.burnedpie.selena;
 
-import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
+import org.burnedpie.selena.audio.impl.RadioServiceImpl;
+import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.junit.*;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -17,13 +18,15 @@ import java.util.logging.Logger;
 /**
  * Created by jibe on 25/07/16.
  */
-@Category(IntegrationTest.class)
 @RunWith(value = SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "spring.xml")
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-public class TestRadioIntegration {
+@EnableAutoConfiguration
+@SpringBootTest(classes = {
+        RadioServiceImpl.class,
+        NativeCommandImpl.class})
+public class RadioIntegrationTest {
 
-    private static final Logger s_logger = Logger.getLogger(TestRadioIntegration.class.getName());
+    private static final Logger s_logger = Logger.getLogger(RadioIntegrationTest.class.getName());
 
     @Autowired
     RadioService radioService;
@@ -45,6 +48,7 @@ public class TestRadioIntegration {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Assert.fail();
         }
         // then
         Assert.assertTrue(radioService.isRadioOn());

@@ -18,8 +18,15 @@ public class NativeCommandImpl implements NativeCommand {
 
     private final Logger logger = Logger.getLogger(NativeCommandImpl.class.getName());
 
-    public String launchNativeCommandAndReturnInputStreamValue(String s) throws IOException {
+    public Process launchNativeCommandAndReturnProcess(String s) throws IOException {
+        if (s == null) {
+            throw new IOException("Command is null.");
+        }
         Process process = Runtime.getRuntime().exec(s);
+        return process;
+    }
+
+    public String readProcessAndReturnInputStreamValue(Process process) throws IOException {
         InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
         BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
         String line = bufferedReader.readLine();
@@ -27,9 +34,7 @@ public class NativeCommandImpl implements NativeCommand {
         return line;
     }
 
-
-    public int launchNativeCommandAndReturnExitValue(String s) throws IOException {
-        Process process = Runtime.getRuntime().exec(s);
+    public int readProcessAndReturnExitValue(Process process) throws IOException {
         try {
             process.waitFor();
             return process.exitValue();
@@ -46,5 +51,4 @@ public class NativeCommandImpl implements NativeCommand {
             return exitValue;
         }
     }
-
 }

@@ -1,13 +1,14 @@
-package org.burnedpie.selena.audio.integration;
+package org.burnedpie.selena;
 
 import org.apache.commons.lang3.StringUtils;
 import org.burnedpie.selena.audio.util.NativeCommand;
+import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -21,13 +22,13 @@ import java.util.logging.Logger;
 /**
  * Created by jibe on 08/08/16.
  */
-@Category(IntegrationTest.class)
 @RunWith(value = SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "spring.xml")
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
-public class TestNativeCommandIntegration {
+@EnableAutoConfiguration
+@SpringBootTest(classes = {NativeCommandImpl.class})
+public class NativeCommandIntegrationTest {
 
-    private final Logger logger = Logger.getLogger(TestNativeCommandIntegration.class.getName());
+    private final Logger logger = Logger.getLogger(NativeCommandIntegrationTest.class.getName());
 
     @Autowired
     private NativeCommand nativeCommand;
@@ -37,8 +38,10 @@ public class TestNativeCommandIntegration {
         // given that
         String command = null;
         // when
+        String result ;
         try {
-            nativeCommand.launchNativeCommandAndReturnInputStreamValue(null);
+            Process process = nativeCommand.launchNativeCommandAndReturnProcess(null);
+            result = nativeCommand.readProcessAndReturnInputStreamValue(process);
         } catch (IOException e) {
             // then
             e.printStackTrace();
@@ -58,7 +61,8 @@ public class TestNativeCommandIntegration {
         // when
         String nativeDayOfTheMonth = null;
         try {
-            nativeDayOfTheMonth = nativeCommand.launchNativeCommandAndReturnInputStreamValue("date +%d");
+            Process process = nativeCommand.launchNativeCommandAndReturnProcess("date +%d");
+            nativeDayOfTheMonth = nativeCommand.readProcessAndReturnInputStreamValue(process);
         } catch (IOException e) {
             e.printStackTrace();
             Assert.fail();
@@ -76,9 +80,10 @@ public class TestNativeCommandIntegration {
         logger.info("player file " + url.getPath());
 
         // when
-        int returnValue = nativeCommand.launchNativeCommandAndReturnExitValue(command);
+        Process process = nativeCommand.launchNativeCommandAndReturnProcess(command);
+        int returnValue = nativeCommand.readProcessAndReturnExitValue(process);
 
-        // then
+                // then
         Assert.assertTrue(new File(url.getPath()).exists());
         Assert.assertEquals(0, returnValue);
     }
