@@ -11,7 +11,6 @@ import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.burnedpie.selena.web.rest.controller.RemoteController;
 import org.burnedpie.selena.web.rest.controller.ReturnValue;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -46,9 +44,9 @@ import java.util.logging.Logger;
         ConfigurationRepository.class,
         RadioStationRepository.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
-public class RestControllerIntegrationTest {
+public class RestControllerIT {
 
-    Logger logger = Logger.getLogger(RestControllerIntegrationTest.class.getName());
+    Logger logger = Logger.getLogger(RestControllerIT.class.getName());
 
     @LocalServerPort
     private int port;
