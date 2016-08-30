@@ -12,4 +12,5 @@ import java.io.InputStreamReader;
 public interface NativeCommand {
     Executor launchNativeCommandAndReturnExecutor(String command, String ... param) throws IOException;
     int launchCommandAndReturnExitValue(String command, String ... param) throws IOException;
+    String launchNativeCommandAndReturnOutput(String command, String ... args) throws IOException;
 }

@@ -1,6 +1,7 @@
 package org.burnedpie.selena;
 
 import org.apache.commons.exec.Executor;
+import org.apache.commons.lang3.StringUtils;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +16,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 /**
@@ -48,7 +50,6 @@ public class NativeCommandIT {
         Assert.fail();
     }
 
-    /*
     @Test
     public void testDateCommand() {
         // given that
@@ -56,13 +57,11 @@ public class NativeCommandIT {
         int expectedDayOfTheMonth = timePoint.getDayOfMonth();
         String expectedDayOfTheMonthWithTwoCaracters = StringUtils.leftPad(expectedDayOfTheMonth + "", 2, '0');
 
-        // when
+        // when‚
         String nativeDayOfTheMonth = null;
         try {
-            Executor executor = nativeCommand.launchNativeCommandAndReturnExecutor("date +%d");
-            ExecuteStreamHandlerWithReader executeStreamHandlerWithReader = (ExecuteStreamHandlerWithReader) executor.getStreamHandler();
-            String result = executeStreamHandlerWithReader.readFromOutputStream();
-            logger.info("result = " + result);
+            nativeDayOfTheMonth = nativeCommand.launchNativeCommandAndReturnOutput("date", "+%d");
+            logger.info("result = " + nativeDayOfTheMonth);
         } catch (IOException e) {
             e.printStackTrace();
             Assert.fail();
@@ -70,7 +69,7 @@ public class NativeCommandIT {
 
         // then
         Assert.assertEquals(expectedDayOfTheMonthWithTwoCaracters, nativeDayOfTheMonth);
-    }*/
+    }
 
     @Test()
     public void testMplayerCommand() throws IOException {
