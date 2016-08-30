@@ -34,7 +34,7 @@ public class VolumeServiceImpl implements VolumeService {
             if (value == null) {
                 throw new VolumeException("Volume up command is undefined.");
             }
-            nativeCommand.launchNativeCommandAndReturnProcess(value);
+            nativeCommand.launchNativeCommandAndReturnExecutor(value);
         } catch (IOException | NullPointerException e) {
             logger.severe(e.getMessage());
             logger.severe(ExceptionUtils.getStackTrace(e));
@@ -48,7 +48,7 @@ public class VolumeServiceImpl implements VolumeService {
             if (value == null) {
                 throw new VolumeException("Volume down command is undefined.");
             }
-            nativeCommand.launchNativeCommandAndReturnProcess(value);
+            nativeCommand.launchNativeCommandAndReturnExecutor(value);
         } catch (IOException | NullPointerException e) {
             logger.severe(e.getMessage());
             logger.severe(ExceptionUtils.getStackTrace(e));

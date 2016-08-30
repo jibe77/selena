@@ -1,5 +1,6 @@
 package org.burnedpie.selena.audio.impl;
 
+import org.apache.commons.exec.Executor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.exception.AirplayException;
@@ -30,8 +31,7 @@ public class ShairportDummyImpl implements AirplayService {
     @Autowired
     ConfigurationRepository configurationRepository;
 
-    private Thread thread;
-    Process process;
+    private Executor executor;
 
     @Override
     public void turnAirplayOn() throws AirplayException {
@@ -40,57 +40,37 @@ public class ShairportDummyImpl implements AirplayService {
             throw new RadioException("Service name should not be null");
         }
         logger.info("Starting airplay with name " + serviceName + "...");
-        thread = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    String commandLine = "shairport -a " + serviceName + " -- -c \"PCM\"";
-                    logger.info("launching shairport with command " + commandLine + " ...");
-                    // command is different because shairport-sync doesn't exist on my local machine
-                    process = nativeCommand.launchNativeCommandAndReturnProcess(commandLine);
-                    String returnValue = nativeCommand.readProcessAndReturnInputStreamValue(process);
-                    logger.info("shairport is finished with return value " + returnValue + ".");
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                    logger.error(ExceptionUtils.getStackTrace(e));
-                    throw new AirplayException(e);
-                }
-            }
-        };
-        thread.start();
         try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.info("launching shairport ...");
+            // command is different because shairport-sync doesn't exist on my local machine
+            this.executor = nativeCommand.launchNativeCommandAndReturnExecutor("shairport", "-a", serviceName, "--", "-c", "\"PCM\"");
+            // String returnValue = nativeCommand.launchNativeCommandAndReturnExecutor(executor);
+            logger.info("shairport is running ...");
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            logger.error(ExceptionUtils.getStackTrace(e));
+            throw new AirplayException(e);
         }
     }
 
     public void turnAirplayOff() {
-        process.destroy();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (isAirplayOn()) {
+            logger.info("Turning off shairport ...");
+            executor.getWatchdog().stop();
+            logger.info("... done");
+            executor = null;
+        } else {
+            logger.info("Can't turn off shairport, it is already off.");
         }
-        if (process.isAlive()) {
-            process.destroyForcibly();
-        }
-        thread = null;
     }
 
     public boolean isAirplayOn() {
-        if (thread == null) {
-            logger.info("Airplay is off.");
+        if (executor == null) {
+            logger.info("shairport is off.");
             return false;
         } else {
-            if (thread.isAlive()) {
-                logger.info("Airplay is on.");
-                return true;
-            } else {
-                logger.info("Airplay is off.");
-                return false;
-            }
-
+            logger.info("shairport is on.");
+            return true;
         }
     }
 }

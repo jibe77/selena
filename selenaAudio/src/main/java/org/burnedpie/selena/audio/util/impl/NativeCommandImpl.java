@@ -1,13 +1,10 @@
 package org.burnedpie.selena.audio.util.impl;
 
-import org.burnedpie.selena.audio.exception.AirplayException;
+import org.apache.commons.exec.*;
 import org.burnedpie.selena.audio.util.NativeCommand;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.logging.Logger;
 
 /**
@@ -18,37 +15,58 @@ public class NativeCommandImpl implements NativeCommand {
 
     private final Logger logger = Logger.getLogger(NativeCommandImpl.class.getName());
 
-    public Process launchNativeCommandAndReturnProcess(String s) throws IOException {
-        if (s == null) {
+    public Executor launchNativeCommandAndReturnExecutor(String command, String ... args) throws IOException {
+        if (command == null) {
             throw new IOException("Command is null.");
         }
-        Process process = Runtime.getRuntime().exec(s);
-        return process;
-    }
-
-    public String readProcessAndReturnInputStreamValue(Process process) throws IOException {
-        InputStreamReader inputStreamReader = new InputStreamReader(process.getInputStream());
-        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-        String line = bufferedReader.readLine();
-        bufferedReader.close();
-        return line;
-    }
-
-    public int readProcessAndReturnExitValue(Process process) throws IOException {
-        try {
-            process.waitFor();
-            return process.exitValue();
-        } catch (InterruptedException e) {
-            process.destroy();
-            try {
-                logger.info("waiting for command to finish ...");
-                process.waitFor();
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }
-            int exitValue = process.exitValue();
-            logger.info("Interrupted with exit value " + exitValue);
-            return exitValue;
+        CommandLine cmdLine = new CommandLine(command);
+        for (String arg : args) {
+            cmdLine.addArgument(arg);
         }
+        DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(-1);
+        Executor executor = new DefaultExecutor();
+        executor.setExitValue(1);
+        executor.setWatchdog(watchdog);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ExecuteStreamHandler handler = new PumpStreamHandler(bos);
+        executor.setStreamHandler(handler);
+
+        executor.execute(cmdLine, resultHandler);
+        return executor;
     }
+
+    @Override
+    public int launchCommandAndReturnExitValue(String command, String ... args) throws IOException {
+        if (command == null) {
+            throw new IOException("Command is null.");
+        }
+        CommandLine cmdLine = new CommandLine(command);
+        for (String arg : args) {
+            cmdLine.addArgument(arg);
+        }
+        DefaultExecuteResultHandler resultHandler = new DefaultExecuteResultHandler();
+
+        ExecuteWatchdog watchdog = new ExecuteWatchdog(-1);
+        Executor executor = new DefaultExecutor();
+        executor.setExitValue(1);
+        executor.setWatchdog(watchdog);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ExecuteStreamHandler handler = new PumpStreamHandler(bos);
+        executor.setStreamHandler(handler);
+
+        executor.execute(cmdLine, resultHandler);
+        try {
+            resultHandler.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        int exitValue = resultHandler.getExitValue();
+        return exitValue;
+    }
+
+
 }
