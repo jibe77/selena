@@ -127,6 +127,21 @@ public class RemoteController {
         }
     }
 
+    // airplay constants and methods
+    public static final String AIRPLAY_STOPPED          =   "Airplay is stopped.";
+    public static final String AIRPLAY_ALREADY_STOPPED  =   "Airplay is already stopped.";
+    public static final String REST_STOP_AIRPLAY       =   "/stopAirplay";
+
+    @RequestMapping(REST_STOP_AIRPLAY)
+    ReturnValue stopAirplay() {
+        if (airplayService.isAirplayOn() == false) {
+            return new ReturnValue(SUCCESS, AIRPLAY_ALREADY_STOPPED);
+        } else {
+            airplayService.turnAirplayOff();
+            return new ReturnValue(SUCCESS, AIRPLAY_STOPPED);
+        }
+    }
+
     public AirplayService getAirplayService() {
         return airplayService;
     }

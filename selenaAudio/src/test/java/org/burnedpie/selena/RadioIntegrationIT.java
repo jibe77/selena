@@ -68,6 +68,7 @@ public class RadioIntegrationIT {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Assert.fail();
         }
         radioService.stopRadio();
 

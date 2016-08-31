@@ -83,7 +83,7 @@ public class NativeCommandImpl implements NativeCommand {
         executor.setWatchdog(watchdog);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ExecuteStreamHandler handler = new PumpStreamHandler(bos);
+        PumpStreamHandler handler = new PumpStreamHandler(bos);
         executor.setStreamHandler(handler);
 
         executor.execute(cmdLine, resultHandler);

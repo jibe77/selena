@@ -21,56 +21,16 @@ import java.io.IOException;
  */
 @Component
 @Scope("singleton")
-public class ShairportDummyImpl implements AirplayService {
+public class ShairportDummyImpl extends ShairportSyncImpl implements AirplayService {
 
     private Logger logger = LoggerFactory.getLogger(ShairportDummyImpl.class);
 
-    @Autowired
-    private NativeCommand nativeCommand;
-
-    @Autowired
-    ConfigurationRepository configurationRepository;
-
-    private Executor executor;
-
-    @Override
-    public void turnAirplayOn() throws AirplayException {
-        final String serviceName = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
-        if (serviceName == null) {
-            throw new RadioException("Service name should not be null");
-        }
-        logger.info("Starting airplay with name " + serviceName + "...");
-        try {
-            logger.info("launching shairport ...");
-            // command is different because shairport-sync doesn't exist on my local machine
-            this.executor = nativeCommand.launchNativeCommandAndReturnExecutor("shairport", "-a", serviceName, "--", "-c", "\"PCM\"");
-            // String returnValue = nativeCommand.launchNativeCommandAndReturnExecutor(executor);
-            logger.info("shairport is running ...");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            logger.error(ExceptionUtils.getStackTrace(e));
-            throw new AirplayException(e);
-        }
+    public ShairportDummyImpl() {
+        this.command = "shairport";
     }
 
-    public void turnAirplayOff() {
-        if (isAirplayOn()) {
-            logger.info("Turning off shairport ...");
-            executor.getWatchdog().stop();
-            logger.info("... done");
-            executor = null;
-        } else {
-            logger.info("Can't turn off shairport, it is already off.");
-        }
+    protected Executor startCommand(String serviceName) throws IOException {
+        return nativeCommand.launchNativeCommandAndReturnExecutor(command, "-a", serviceName, "--", "-c", "\"PCM\"");
     }
 
-    public boolean isAirplayOn() {
-        if (executor == null) {
-            logger.info("shairport is off.");
-            return false;
-        } else {
-            logger.info("shairport is on.");
-            return true;
-        }
-    }
 }

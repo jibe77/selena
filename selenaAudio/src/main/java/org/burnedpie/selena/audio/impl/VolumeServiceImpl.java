@@ -29,26 +29,22 @@ public class VolumeServiceImpl implements VolumeService {
     ConfigurationRepository configurationRepository;
 
     public void volumeUp() {
-        try {
-            String value = configurationRepository.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND).getConfigValue();
-            if (value == null) {
-                throw new VolumeException("Volume up command is undefined.");
-            }
-            nativeCommand.launchNativeCommandAndReturnExecutor(value);
-        } catch (IOException | NullPointerException e) {
-            logger.severe(e.getMessage());
-            logger.severe(ExceptionUtils.getStackTrace(e));
-            throw new VolumeException(e);
-        }
+        controlVolume(ConfigurationKeyEnum.VOLUME_UP_COMMAND);
     }
 
     public void volumeDown() {
+        controlVolume(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND);
+    }
+
+    private void controlVolume(ConfigurationKeyEnum configurationKeyEnum) {
         try {
-            String value = configurationRepository.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND).getConfigValue();
+            String value = configurationRepository.findByConfigKey(configurationKeyEnum).getConfigValue();
             if (value == null) {
-                throw new VolumeException("Volume down command is undefined.");
+                throw new VolumeException("command is undefined :" + configurationKeyEnum.name());
             }
-            nativeCommand.launchNativeCommandAndReturnExecutor(value);
+
+            int exitValue = nativeCommand.launchCommandAndReturnExitValue(value);
+            // exit value is not reliable.
         } catch (IOException | NullPointerException e) {
             logger.severe(e.getMessage());
             logger.severe(ExceptionUtils.getStackTrace(e));

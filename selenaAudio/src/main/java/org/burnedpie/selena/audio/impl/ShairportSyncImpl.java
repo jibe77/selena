@@ -20,17 +20,20 @@ import java.util.logging.Logger;
  */
 @Component
 @Scope("singleton")
-public class ShairportSyncImpl implements AirplayService {
+public class ShairportSyncImpl extends AbstractServiceAudio implements AirplayService {
 
     private Logger logger = Logger.getLogger(ShairportSyncImpl.class.getName());
 
     @Autowired
-    private NativeCommand nativeCommand;
+    protected NativeCommand nativeCommand;
 
     @Autowired
     ConfigurationRepository configurationRepository;
 
-    private Executor executor;
+
+    public ShairportSyncImpl() {
+        super("shairport-sync");
+    }
 
     public void turnAirplayOn() throws AirplayException {
         final String serviceName = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
@@ -39,9 +42,9 @@ public class ShairportSyncImpl implements AirplayService {
         }
         logger.info("Starting airplay with name " + serviceName + "...");
         try {
-            logger.info("Starting shairport-sync ...");
-            this.executor = nativeCommand.launchNativeCommandAndReturnExecutor("shairport-sync", "-a", serviceName, "--", "\"PCM\"");
-            logger.info("... shairport-sync is running.");
+            logger.info("Starting " + command + " ...");
+            this.executor = startCommand(serviceName);
+            logger.info("... " + command + " is running.");
         } catch (IOException | NullPointerException e) {
             logger.severe(e.getMessage());
             logger.severe(ExceptionUtils.getStackTrace(e));
@@ -49,29 +52,15 @@ public class ShairportSyncImpl implements AirplayService {
         }
     }
 
+    protected Executor startCommand(String serviceName) throws IOException {
+        return nativeCommand.launchNativeCommandAndReturnExecutor(command, "-a", serviceName, "--", "\"PCM\"");
+    }
+
     public void turnAirplayOff() {
-        if (isAirplayOn()) {
-            logger.info("Turning off shairport-sync ...");
-            executor.getWatchdog().destroyProcess();
-            logger.info("... done");
-        } else {
-            logger.info("Can't turn off shairport-sync, it is already off.");
-        }
+        super.stopService();
     }
 
     public boolean isAirplayOn() {
-        if (executor == null) {
-            logger.info("Airplay is off.");
-            return false;
-        } else {
-            if (executor.getWatchdog() != null && executor.getWatchdog().isWatching() && executor.getWatchdog().killedProcess() == false) {
-                logger.info("Airplay is on.");
-                return true;
-            } else {
-                logger.info("Airplay is off.");
-                return false;
-            }
-
-        }
+        return isServiceOn();
     }
 }
