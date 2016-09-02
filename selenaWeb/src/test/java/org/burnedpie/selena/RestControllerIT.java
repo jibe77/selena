@@ -1,6 +1,7 @@
 package org.burnedpie.selena;
 
 import org.burnedpie.selena.audio.impl.RadioServiceImpl;
+import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
 import org.burnedpie.selena.audio.impl.ShairportSyncImpl;
 import org.burnedpie.selena.audio.impl.VolumeServiceImpl;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
@@ -38,7 +39,7 @@ import java.util.logging.Logger;
         RemoteController.class,
         VolumeServiceImpl.class,
         NativeCommandImpl.class,
-        ShairportSyncImpl.class,
+        ShairportDummyImpl.class,
         RadioServiceImpl.class,
         ConfigurationRepository.class,
         RadioStationRepository.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,6 +74,14 @@ public class RestControllerIT {
             radioStationDAO.save(radioStation);
         }
 
+        if (radioStationDAO.findByChannel(2) == null) {
+            RadioStation radioStation = new RadioStation();
+            radioStation.setName("Sample");
+            radioStation.setUrl("http://www.wavsource.com/snds_2016-08-21_1204101428963685/animals/bird.wav");
+            radioStation.setChannel(2);
+            radioStationDAO.save(radioStation);
+        }
+
         if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
@@ -94,6 +103,8 @@ public class RestControllerIT {
             configurationDAO.save(configuration);
         }
 
+        // TOOD : channel 2 on wav file
+
         Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME));
         Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND));
         Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND));
@@ -101,12 +112,26 @@ public class RestControllerIT {
 
     @After
     public void tearDown() {
-        String url = base + RemoteController.REST_STOP_AIRPLAY;
+        String url = base + RemoteController.REST_STOP;
         ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
     }
 
     @Test
-    public void testRemoteController_1_StartAirplay() {
+    public void testRemoteController_00_AirplayStarted() {
+        // given that
+        String url = base + RemoteController.REST_IS_AIRPLAY_ON;
+
+        // when
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
+
+        // then
+        Assert.assertEquals(RemoteController.TRUE, returnValue.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_IS_STARTED, returnValue.getMessage());
+    }
+
+
+    @Test
+    public void testRemoteController_01_StartAirplay() {
         // given that
         String url = base + RemoteController.REST_START_AIRPLAY;
 
@@ -115,11 +140,11 @@ public class RestControllerIT {
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
-        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValue.getMessage());
+        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STARTED, returnValue.getMessage());
     }
 
     @Test
-    public void testRemoteController_2_PlayRadio() {
+    public void testRemoteController_02_PlayRadio() {
         // given that
         int channel = 1;
         String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;
@@ -136,7 +161,7 @@ public class RestControllerIT {
     }
 
     @Test
-    public void testRemoteController_3_PlayRadio10() {
+    public void testRemoteController_03_PlayRadio10() {
         // given that
         int channel = 10;
         String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;
@@ -152,7 +177,7 @@ public class RestControllerIT {
     }
 
     @Test
-    public void testRemoteController_4_StartAirplayAlreadyStartedButShutdownByTearDownMethod() {
+    public void testRemoteController_04_StartAirplayAlreadyStartedButShutdownByTearDownMethod() {
         // given that
         String url = base + RemoteController.REST_START_AIRPLAY;
 
@@ -161,24 +186,28 @@ public class RestControllerIT {
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
-        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValue.getMessage());
+        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STARTED, returnValue.getMessage());
     }
 
     @Test
-    public void testRemoteController_5_Stop() {
+    public void testRemoteController_05_Stop() {
         // given that
         String url = base + RemoteController.REST_STOP;
+        String urlIsAirplayOn = base + RemoteController.REST_IS_AIRPLAY_ON;
 
         // when
         ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
+        ReturnValue returnValueIsAirplayOn = template.getForObject(urlIsAirplayOn, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
         Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValue.getMessage());
+        Assert.assertEquals(RemoteController.TRUE, returnValueIsAirplayOn.getStatus());
+        Assert.assertEquals(RemoteController.AIRPLAY_IS_STARTED, returnValueIsAirplayOn.getMessage());
     }
 
     @Test
-    public void testRemoteController_6_VolumeUp() {
+    public void testRemoteController_06_VolumeUp() {
         // given that
         String url = base + RemoteController.REST_VOLUME_UP;
 
@@ -191,7 +220,7 @@ public class RestControllerIT {
     }
 
     @Test
-    public void testRemoteController_7_VolumeDown() {
+    public void testRemoteController_07_VolumeDown() {
         // given that
         String url = base + RemoteController.REST_VOLUME_DOWN;
 
@@ -204,23 +233,23 @@ public class RestControllerIT {
     }
 
     @Test
-    public void testRemoteController_8_StopAirPlay() {
+    public void testRemoteController_08_StopAirPlay() {
         // given that
-        String url = base + RemoteController.REST_STOP_AIRPLAY;
+        String url = base + RemoteController.REST_STOP;
 
         // when
         ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
-        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STOPPED, returnValue.getMessage());
+        Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValue.getMessage());
     }
 
     @Test
-    public void testRemoteController_9_StartAirplayAlreadyStartedButShutdownByTearDownMethod() {
+    public void testRemoteController_09_StartAirplayAlreadyStartedButShutdownByTearDownMethod() {
         // given that
         String urlStart = base + RemoteController.REST_START_AIRPLAY;
-        String urlStop  = base + RemoteController.REST_STOP_AIRPLAY;
+        String urlStop  = base + RemoteController.REST_STOP;
 
         // when
         ReturnValue returnValueStart = template.getForObject(urlStart, ReturnValue.class);
@@ -231,8 +260,55 @@ public class RestControllerIT {
         Assert.assertEquals(RemoteController.SUCCESS, returnValueStart.getStatus());
         Assert.assertEquals(RemoteController.SUCCESS, returnValueStop.getStatus());
         Assert.assertEquals(RemoteController.SUCCESS, returnValueAlreadyStop.getStatus());
-        Assert.assertEquals(RemoteController.AIRPLAY_STARTED, returnValueStart.getMessage());
-        Assert.assertEquals(RemoteController.AIRPLAY_STOPPED, returnValueStop.getMessage());
-        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STOPPED, returnValueAlreadyStop.getMessage());
+        Assert.assertEquals(RemoteController.AIRPLAY_ALREADY_STARTED, returnValueStart.getMessage());
+        Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValueStop.getMessage());
+        Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValueAlreadyStop.getMessage());
     }
+
+    @Test
+    public void testRemoteController_10_StartRadioAndAirplayShouldBeOnAtTheEnd() throws InterruptedException {
+        // given that
+        int channel = 2;
+        String urlStart = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;;
+        String urlAirplay  = base + RemoteController.REST_IS_AIRPLAY_ON;
+
+        // when
+        ReturnValue returnValueStart = template.getForObject(urlStart, ReturnValue.class);
+        Thread.sleep(5000);
+        ReturnValue returnValueAirplay  = template.getForObject(urlAirplay, ReturnValue.class);
+
+        // then
+        Assert.assertEquals(RemoteController.SUCCESS, returnValueStart.getStatus());
+        Assert.assertEquals(RemoteController.TRUE, returnValueAirplay.getStatus());
+        Assert.assertEquals(
+                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(channel)),
+                returnValueStart.getMessage());
+        Assert.assertEquals(RemoteController.AIRPLAY_IS_STARTED, returnValueAirplay.getMessage());
+    }
+
+    @Test
+    public void testRemoteController_10_StartRadioThenStopAndAirplayShouldBeOnAtTheEnd() throws InterruptedException {
+        // given that
+        int channel = 1;
+        String urlStart = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;;
+        String urlStop  = base + RemoteController.REST_STOP;
+        String urlAirplay  = base + RemoteController.REST_IS_AIRPLAY_ON;
+
+        // when
+        ReturnValue returnValueStart = template.getForObject(urlStart, ReturnValue.class);
+        Thread.sleep(5000);
+        ReturnValue returnValueStop  = template.getForObject(urlStop, ReturnValue.class);
+        ReturnValue returnValueAirplay  = template.getForObject(urlAirplay, ReturnValue.class);
+
+        // then
+        Assert.assertEquals(RemoteController.SUCCESS, returnValueStart.getStatus());
+        Assert.assertEquals(RemoteController.SUCCESS, returnValueStop.getStatus());
+        Assert.assertEquals(RemoteController.TRUE, returnValueAirplay.getStatus());
+        Assert.assertEquals(
+                RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(channel)),
+                returnValueStart.getMessage());
+        Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValueStop.getMessage());
+        Assert.assertEquals(RemoteController.AIRPLAY_IS_STARTED, returnValueAirplay.getMessage());
+    }
+
 }

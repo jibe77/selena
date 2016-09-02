@@ -3,10 +3,12 @@ package org.burnedpie.selena.audio.impl;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.burnedpie.selena.audio.AirplayService;
+import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.exception.AirplayException;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
+import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -25,7 +27,10 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
     private Logger logger = Logger.getLogger(ShairportSyncImpl.class.getName());
 
     @Autowired
-    protected NativeCommand nativeCommand;
+    NativeCommand nativeCommand;
+
+    @Autowired
+    RadioService radioService;
 
     @Autowired
     ConfigurationRepository configurationRepository;
@@ -35,10 +40,20 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
         super("shairport-sync");
     }
 
-    public void turnAirplayOn() throws AirplayException {
-        final String serviceName = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
-        if (serviceName == null) {
-            throw new RadioException("Service name should not be null");
+    public synchronized void turnAirplayOn() throws AirplayException {
+        if (isAirplayOn()) {
+            logger.warning("Can't start " + command + " because it's already on.");
+            return;
+        } else if (radioService.isRadioOn()) {
+            radioService.stopRadio();
+        }
+
+        final Configuration configuration = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
+        String serviceName;
+        if (configuration == null || configuration.getConfigValue() == null) {
+            serviceName = "SELENA Airplay";
+        } else {
+            serviceName = configuration.getConfigValue();
         }
         logger.info("Starting airplay with name " + serviceName + "...");
         try {

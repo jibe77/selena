@@ -154,11 +154,11 @@ public class RestControllerTest {
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
         Assert.assertEquals(RemoteController.PLAYER_STOPPED, returnValue.getMessage());
         // 1. si airplay, couper airplay
-        Mockito.verify(mockAirplayService, Mockito.times(1)).isAirplayOn();
-        Mockito.verify(mockAirplayService, Mockito.times(1)).turnAirplayOff();
+        Mockito.verify(mockAirplayService, Mockito.atLeast(1)).isAirplayOn();
+        Mockito.verify(mockAirplayService, Mockito.atLeast(1)).turnAirplayOff();
         // 2. si radio, couper radio
-        Mockito.verify(mockRadioService, Mockito.times(1)).isRadioOn();
-        Mockito.verify(mockRadioService, Mockito.times(1)).stopRadio();
+        Mockito.verify(mockRadioService, Mockito.atLeast(1)).isRadioOn();
+        Mockito.verify(mockRadioService, Mockito.atLeast(1)).stopRadio();
     }
 
     @Test

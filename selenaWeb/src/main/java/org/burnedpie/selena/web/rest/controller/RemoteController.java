@@ -9,12 +9,16 @@ import org.burnedpie.selena.persistance.dao.RadioStationRepository;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.logging.Logger;
 
 @RestController
 @EnableAutoConfiguration
+@Scope(scopeName = "singleton")
 public class RemoteController {
 
     Logger logger = Logger.getLogger(RemoteController.class.getName());
@@ -31,6 +35,8 @@ public class RemoteController {
     // global constants
     public static final String SUCCESS              =   "SUCCESS";
     public static final String FAIL                 =   "FAIL";
+    public static final String TRUE                 =   "TRUE";
+    public static final String FALSE                =   "FALSE";
 
     // player stopped constants and method
     public static final String PLAYER_STOPPED       =   "Player is stopped.";
@@ -44,6 +50,7 @@ public class RemoteController {
         if (airplayService.isAirplayOn()) {
             airplayService.turnAirplayOff();
         }
+        startAirplay();
         return new ReturnValue(SUCCESS, PLAYER_STOPPED);
     }
 
@@ -86,6 +93,7 @@ public class RemoteController {
     @RequestMapping(REST_PLAY_RADIO_STATION)
     ReturnValue playRadioStation(@RequestParam(value="radioStation", required = true) Integer channel) {
         if (airplayService.isAirplayOn()) {
+            logger.info("stopping airplay because radio is starting ...");
             airplayService.turnAirplayOff();
         }
         if (radioService.isRadioOn()) {
@@ -128,18 +136,32 @@ public class RemoteController {
     }
 
     // airplay constants and methods
-    public static final String AIRPLAY_STOPPED          =   "Airplay is stopped.";
-    public static final String AIRPLAY_ALREADY_STOPPED  =   "Airplay is already stopped.";
-    public static final String REST_STOP_AIRPLAY       =   "/stopAirplay";
+    public static final String AIRPLAY_IS_STARTED       =   "Airplay is started.";
+    public static final String AIRPLAY_IS_STOPPED       =   "Airplay is stopped.";
+    public static final String REST_IS_AIRPLAY_ON       =   "/isAirplayOn";
 
-    @RequestMapping(REST_STOP_AIRPLAY)
-    ReturnValue stopAirplay() {
-        if (airplayService.isAirplayOn() == false) {
-            return new ReturnValue(SUCCESS, AIRPLAY_ALREADY_STOPPED);
+    @RequestMapping(REST_IS_AIRPLAY_ON)
+    ReturnValue startIsAirplayOn() {
+        if (airplayService.isAirplayOn()) {
+            return new ReturnValue(TRUE, AIRPLAY_IS_STARTED);
         } else {
-            airplayService.turnAirplayOff();
-            return new ReturnValue(SUCCESS, AIRPLAY_STOPPED);
+            return new ReturnValue(FALSE, AIRPLAY_IS_STOPPED);
         }
+    }
+
+    @PostConstruct
+    public void startAirplayAutomatically() {
+        logger.info("starting RemoteController...");
+        startAirplay();
+        logger.info("...done.");
+    }
+
+    @PreDestroy
+    public void stopAudioServices() {
+        logger.info("stopping RemoteController, including radio and airplay services...");
+        radioService.stopRadio();
+        airplayService.turnAirplayOff();
+        logger.info("...done.");
     }
 
     public AirplayService getAirplayService() {

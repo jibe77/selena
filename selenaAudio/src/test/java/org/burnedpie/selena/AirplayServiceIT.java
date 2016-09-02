@@ -1,6 +1,8 @@
 package org.burnedpie.selena;
 
 import org.burnedpie.selena.audio.AirplayService;
+import org.burnedpie.selena.audio.RadioService;
+import org.burnedpie.selena.audio.impl.RadioServiceImpl;
 import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
@@ -28,6 +30,7 @@ import java.util.logging.Logger;
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @SpringBootTest(classes = {
         ShairportDummyImpl.class,
+        RadioServiceImpl.class,
         ConfigurationRepository.class,
         NativeCommandImpl.class})
 @EnableAutoConfiguration

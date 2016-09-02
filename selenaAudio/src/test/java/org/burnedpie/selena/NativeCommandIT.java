@@ -2,6 +2,8 @@ package org.burnedpie.selena;
 
 import org.apache.commons.exec.Executor;
 import org.apache.commons.lang3.StringUtils;
+import org.burnedpie.selena.audio.impl.RadioServiceImpl;
+import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +27,7 @@ import java.util.logging.Logger;
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = {NativeCommandImpl.class})
+@SpringBootTest(classes = {NativeCommandImpl.class, ShairportDummyImpl.class, RadioServiceImpl.class})
 public class NativeCommandIT {
 
     private final Logger logger = Logger.getLogger(NativeCommandIT.class.getName());

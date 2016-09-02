@@ -2,6 +2,7 @@ package org.burnedpie.selena.audio.impl;
 
 import org.apache.commons.exec.Executor;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.exception.RadioException;
 import org.burnedpie.selena.audio.util.NativeCommand;
@@ -26,16 +27,29 @@ public class RadioServiceImpl extends AbstractServiceAudio implements RadioServi
     @Autowired
     NativeCommand nativeCommand;
 
+    @Autowired
+    AirplayService airplayService;
+
     public RadioServiceImpl() {
         super("mplayer");
     }
 
     @Override
     public synchronized void playRadioChannel(final RadioStation radioStation) {
+        if (isRadioOn()) {
+            logger.info("Stop currently played radio");
+            stopRadio();
+        } else if (airplayService.isAirplayOn()) {
+            logger.info("Stop airplay before starting radio");
+            airplayService.turnAirplayOff();
+        }
         logger.info("Starting radio " + radioStation.getName() + " ...");
         try {
             logger.info("launching mplayer ...");
-            Executor executor = nativeCommand.launchNativeCommandAndReturnExecutor(command, "-playlist", radioStation.getUrl());
+            Executor executor = nativeCommand.launchNativeCommandAndReturnExecutorAndTurnOnAirplayOnStopped(
+                    command,
+                    radioStation.getUrl().endsWith("wav") ? "" : "-playlist",
+                    radioStation.getUrl());
             this.executor = executor;
         } catch (IOException | NullPointerException e) {
             logger.error(e.getMessage());

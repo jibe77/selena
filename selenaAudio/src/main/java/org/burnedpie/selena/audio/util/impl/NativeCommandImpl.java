@@ -1,9 +1,10 @@
 package org.burnedpie.selena.audio.util.impl;
 
 import org.apache.commons.exec.*;
+import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.util.NativeCommand;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.nio.ch.IOUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,9 +16,20 @@ import java.util.logging.Logger;
 @Component()
 public class NativeCommandImpl implements NativeCommand {
 
+    @Autowired
+    AirplayService airplayService;
+
     private final Logger logger = Logger.getLogger(NativeCommandImpl.class.getName());
 
     public Executor launchNativeCommandAndReturnExecutor(String command, String ... args) throws IOException {
+        return launch(false, command, args);
+    }
+
+    public Executor launchNativeCommandAndReturnExecutorAndTurnOnAirplayOnStopped(String command, String ... args) throws IOException {
+        return launch(true, command, args);
+    }
+
+    private Executor launch(boolean launchAirplayOnStop, String command, String ... args) throws IOException {
         if (command == null) {
             throw new IOException("Command is null.");
         }
@@ -31,10 +43,27 @@ public class NativeCommandImpl implements NativeCommand {
         Executor executor = new DefaultExecutor();
         executor.setExitValue(1);
         executor.setWatchdog(watchdog);
+        executor.setStreamHandler(new PumpStreamHandler() {
+
+            boolean isStopped = false;
+
+            @Override
+            public void stop() throws IOException {
+                super.stop();
+                logger.info("The command " + command + " is stopped.");
+                isStopped = true;
+                if (launchAirplayOnStop) {
+                    logger.info("Service is stopped, then starting airplay automatically ...");
+                    airplayService.turnAirplayOn();
+                    logger.info("... done");
+                }
+            }
+        });
 
         executor.execute(cmdLine, resultHandler);
         return executor;
     }
+
 
     public String launchNativeCommandAndReturnOutput(String command, String ... args) throws IOException {
         if (command == null) {

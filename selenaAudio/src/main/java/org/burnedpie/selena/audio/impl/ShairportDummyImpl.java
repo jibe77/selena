@@ -29,7 +29,7 @@ public class ShairportDummyImpl extends ShairportSyncImpl implements AirplayServ
         this.command = "shairport";
     }
 
-    protected Executor startCommand(String serviceName) throws IOException {
+    protected synchronized Executor startCommand(String serviceName) throws IOException {
         return nativeCommand.launchNativeCommandAndReturnExecutor(command, "-a", serviceName, "--", "-c", "\"PCM\"");
     }
 

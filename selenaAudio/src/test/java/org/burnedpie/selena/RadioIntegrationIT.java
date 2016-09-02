@@ -2,6 +2,7 @@ package org.burnedpie.selena;
 
 import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.impl.RadioServiceImpl;
+import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
 import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
 import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.junit.*;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
 @EnableAutoConfiguration
 @SpringBootTest(classes = {
         RadioServiceImpl.class,
+        ShairportDummyImpl.class,
         NativeCommandImpl.class})
 @DataJpaTest
 public class RadioIntegrationIT {
