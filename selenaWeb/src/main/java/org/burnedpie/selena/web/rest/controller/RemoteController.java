@@ -14,14 +14,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @EnableAutoConfiguration
 @Scope(scopeName = "singleton")
 public class RemoteController {
 
-    Logger logger = Logger.getLogger(RemoteController.class.getName());
+    Logger logger = LoggerFactory.getLogger(RemoteController.class);
 
     @Autowired
     private VolumeService       volumeService;
@@ -68,7 +70,7 @@ public class RemoteController {
             volumeService.volumeUp();
             return new ReturnValue(SUCCESS, VOLUME_TURNED_UP);
         } catch (VolumeException e) {
-            logger.severe(e.getMessage());
+            logger.warn(e.getMessage());
             return new ReturnValue(FAIL, VOLUME_TURNED_UP_FAIL);
         }
     }
@@ -79,7 +81,7 @@ public class RemoteController {
             volumeService.volumeDown();
             return new ReturnValue(SUCCESS, VOLUME_TURNED_DOWN);
         } catch (VolumeException e) {
-            logger.severe(e.getMessage());
+            logger.warn(e.getMessage());
             return new ReturnValue(FAIL, VOLUME_TURNED_DOWN_FAIL);
         }
     }
@@ -110,7 +112,7 @@ public class RemoteController {
             return new ReturnValue(SUCCESS,
                     RADIO_STATION_SET.replace("{0}", String.valueOf(channel)));
         } catch (RadioException e) {
-            logger.severe(e.getMessage());
+            logger.warn(e.getMessage());
             airplayService.turnAirplayOn();
             return new ReturnValue(FAIL,
                     RADIO_STATION_SET_FAIL.replace("{0}", String.valueOf(channel)));
@@ -146,6 +148,20 @@ public class RemoteController {
             return new ReturnValue(TRUE, AIRPLAY_IS_STARTED);
         } else {
             return new ReturnValue(FALSE, AIRPLAY_IS_STOPPED);
+        }
+    }
+
+    // airplay constants and methods
+    public static final String RADIO_IS_STARTED       =   "Radio is started.";
+    public static final String RADIO_IS_STOPPED       =   "Radio is stopped.";
+    public static final String REST_IS_RADIO_ON       =   "/isRadioOn";
+
+    @RequestMapping(REST_IS_RADIO_ON)
+    ReturnValue startIsRadioOn() {
+        if (radioService.isRadioOn()) {
+            return new ReturnValue(TRUE, RADIO_IS_STARTED);
+        } else {
+            return new ReturnValue(FALSE, RADIO_IS_STOPPED);
         }
     }
 

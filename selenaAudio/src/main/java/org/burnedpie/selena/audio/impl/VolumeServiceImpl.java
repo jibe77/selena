@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by jibe on 14/08/16.
@@ -20,7 +22,7 @@ import java.util.logging.Logger;
 @Scope("singleton")
 public class VolumeServiceImpl implements VolumeService {
 
-    private Logger logger = Logger.getLogger(RadioServiceImpl.class.getName());
+    private Logger logger = LoggerFactory.getLogger(RadioServiceImpl.class);
 
     @Autowired
     NativeCommand nativeCommand;
@@ -46,8 +48,8 @@ public class VolumeServiceImpl implements VolumeService {
             int exitValue = nativeCommand.launchCommandAndReturnExitValue(value);
             // exit value is not reliable.
         } catch (IOException | NullPointerException e) {
-            logger.severe(e.getMessage());
-            logger.severe(ExceptionUtils.getStackTrace(e));
+            logger.warn(e.getMessage());
+            logger.warn(ExceptionUtils.getStackTrace(e));
             throw new VolumeException(e);
         }
     }

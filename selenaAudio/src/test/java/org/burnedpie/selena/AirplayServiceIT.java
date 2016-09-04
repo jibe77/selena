@@ -4,7 +4,7 @@ import org.burnedpie.selena.audio.AirplayService;
 import org.burnedpie.selena.audio.RadioService;
 import org.burnedpie.selena.audio.impl.RadioServiceImpl;
 import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
-import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
+import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
@@ -21,7 +21,8 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by jibe on 25/07/16.
@@ -32,12 +33,12 @@ import java.util.logging.Logger;
         ShairportDummyImpl.class,
         RadioServiceImpl.class,
         ConfigurationRepository.class,
-        NativeCommandImpl.class})
+        NativeCommand.class})
 @EnableAutoConfiguration
 @DataJpaTest
 public class AirplayServiceIT {
 
-    private static final Logger s_logger = Logger.getLogger(AirplayServiceIT.class.getName());
+    private static final Logger s_logger = LoggerFactory.getLogger(AirplayServiceIT.class);
 
     @Autowired
     AirplayService airplayService;

@@ -4,7 +4,7 @@ import org.apache.commons.exec.Executor;
 import org.apache.commons.lang3.StringUtils;
 import org.burnedpie.selena.audio.impl.RadioServiceImpl;
 import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
-import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
+import org.burnedpie.selena.audio.util.NativeCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +19,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by jibe on 08/08/16.
@@ -27,10 +29,10 @@ import java.util.logging.Logger;
 @RunWith(SpringRunner.class)
 @TestExecutionListeners(DependencyInjectionTestExecutionListener.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = {NativeCommandImpl.class, ShairportDummyImpl.class, RadioServiceImpl.class})
+@SpringBootTest(classes = {NativeCommand.class, ShairportDummyImpl.class, RadioServiceImpl.class})
 public class NativeCommandIT {
 
-    private final Logger logger = Logger.getLogger(NativeCommandIT.class.getName());
+    private final Logger logger = org.slf4j.LoggerFactory.getLogger(NativeCommandIT.class);
 
     @Autowired
     private org.burnedpie.selena.audio.util.NativeCommand nativeCommand;

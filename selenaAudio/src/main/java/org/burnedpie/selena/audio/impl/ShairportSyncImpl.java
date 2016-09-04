@@ -10,12 +10,13 @@ import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /**
  * Created by jibe on 05/08/16.
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
 @Scope("singleton")
 public class ShairportSyncImpl extends AbstractServiceAudio implements AirplayService {
 
-    private Logger logger = Logger.getLogger(ShairportSyncImpl.class.getName());
+    private Logger logger = LoggerFactory.getLogger(ShairportSyncImpl.class);
 
     @Autowired
     NativeCommand nativeCommand;
@@ -42,7 +43,7 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
 
     public synchronized void turnAirplayOn() throws AirplayException {
         if (isAirplayOn()) {
-            logger.warning("Can't start " + command + " because it's already on.");
+            logger.warn("Can't start " + command + " because it's already on.");
             return;
         } else if (radioService.isRadioOn()) {
             radioService.stopRadio();
@@ -61,8 +62,8 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
             this.executor = startCommand(serviceName);
             logger.info("... " + command + " is running.");
         } catch (IOException | NullPointerException e) {
-            logger.severe(e.getMessage());
-            logger.severe(ExceptionUtils.getStackTrace(e));
+            logger.warn(e.getMessage());
+            logger.warn(ExceptionUtils.getStackTrace(e));
             throw new RadioException(e);
         }
     }

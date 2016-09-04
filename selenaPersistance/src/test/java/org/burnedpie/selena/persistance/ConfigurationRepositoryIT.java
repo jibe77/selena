@@ -34,6 +34,7 @@ public class ConfigurationRepositoryIT {
     }
 
     private void populateDb() {
+        logger.info("populate db.");
         Configuration configuration = new Configuration();
         configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
         configuration.setConfigValue("[selena]test");

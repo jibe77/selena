@@ -4,7 +4,7 @@ import org.burnedpie.selena.audio.impl.RadioServiceImpl;
 import org.burnedpie.selena.audio.impl.ShairportDummyImpl;
 import org.burnedpie.selena.audio.impl.ShairportSyncImpl;
 import org.burnedpie.selena.audio.impl.VolumeServiceImpl;
-import org.burnedpie.selena.audio.util.impl.NativeCommandImpl;
+import org.burnedpie.selena.audio.util.NativeCommand;
 import org.burnedpie.selena.persistance.dao.ConfigurationRepository;
 import org.burnedpie.selena.persistance.dao.RadioStationRepository;
 import org.burnedpie.selena.persistance.domain.Configuration;
@@ -27,7 +27,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by jibe on 13/08/16.
@@ -38,7 +40,7 @@ import java.util.logging.Logger;
 @SpringBootTest(classes = {
         RemoteController.class,
         VolumeServiceImpl.class,
-        NativeCommandImpl.class,
+        NativeCommand.class,
         ShairportDummyImpl.class,
         RadioServiceImpl.class,
         ConfigurationRepository.class,
@@ -47,7 +49,7 @@ import java.util.logging.Logger;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class RestControllerIT {
 
-    Logger logger = Logger.getLogger(RestControllerIT.class.getName());
+    Logger logger = LoggerFactory.getLogger(RestControllerIT.class.getName());
 
     @LocalServerPort
     private int port;
@@ -270,15 +272,25 @@ public class RestControllerIT {
         // given that
         int channel = 2;
         String urlStart = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;;
+        String urlRadio = base + RemoteController.REST_IS_RADIO_ON;
         String urlAirplay  = base + RemoteController.REST_IS_AIRPLAY_ON;
 
         // when
         ReturnValue returnValueStart = template.getForObject(urlStart, ReturnValue.class);
-        Thread.sleep(5000);
+        ReturnValue returnRadio = template.getForObject(urlRadio, ReturnValue.class);
+        Thread.sleep(1000);
+        ReturnValue returnRadio2 = template.getForObject(urlRadio, ReturnValue.class);
+        Thread.sleep(3000);
+        ReturnValue returnRadio3 = template.getForObject(urlRadio, ReturnValue.class);
         ReturnValue returnValueAirplay  = template.getForObject(urlAirplay, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValueStart.getStatus());
+
+        Assert.assertEquals(RemoteController.TRUE, returnRadio.getStatus());
+        Assert.assertEquals(RemoteController.TRUE, returnRadio2.getStatus());
+        Assert.assertEquals(RemoteController.FALSE, returnRadio3.getStatus());
+
         Assert.assertEquals(RemoteController.TRUE, returnValueAirplay.getStatus());
         Assert.assertEquals(
                 RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(channel)),
@@ -287,23 +299,30 @@ public class RestControllerIT {
     }
 
     @Test
-    public void testRemoteController_10_StartRadioThenStopAndAirplayShouldBeOnAtTheEnd() throws InterruptedException {
+    public void testRemoteController_11_StartRadioThenStopAndAirplayShouldBeOnAtTheEnd() throws InterruptedException {
         // given that
         int channel = 1;
         String urlStart = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;;
         String urlStop  = base + RemoteController.REST_STOP;
+        String urlRadio = base + RemoteController.REST_IS_RADIO_ON;
         String urlAirplay  = base + RemoteController.REST_IS_AIRPLAY_ON;
 
         // when
         ReturnValue returnValueStart = template.getForObject(urlStart, ReturnValue.class);
+        ReturnValue returnRadio = template.getForObject(urlRadio, ReturnValue.class);
         Thread.sleep(5000);
+        ReturnValue returnRadio2 = template.getForObject(urlRadio, ReturnValue.class);
         ReturnValue returnValueStop  = template.getForObject(urlStop, ReturnValue.class);
+        ReturnValue returnRadio3 = template.getForObject(urlRadio, ReturnValue.class);
         ReturnValue returnValueAirplay  = template.getForObject(urlAirplay, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValueStart.getStatus());
         Assert.assertEquals(RemoteController.SUCCESS, returnValueStop.getStatus());
         Assert.assertEquals(RemoteController.TRUE, returnValueAirplay.getStatus());
+        Assert.assertEquals(RemoteController.TRUE, returnRadio.getStatus());
+        Assert.assertEquals(RemoteController.TRUE, returnRadio2.getStatus());
+        Assert.assertEquals(RemoteController.FALSE, returnRadio3.getStatus());
         Assert.assertEquals(
                 RemoteController.RADIO_STATION_SET.replace("{0}", String.valueOf(channel)),
                 returnValueStart.getMessage());
