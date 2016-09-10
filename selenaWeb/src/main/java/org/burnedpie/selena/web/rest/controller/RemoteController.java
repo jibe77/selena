@@ -10,8 +10,6 @@ import org.burnedpie.selena.persistance.domain.RadioStation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Scope;
-//import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;

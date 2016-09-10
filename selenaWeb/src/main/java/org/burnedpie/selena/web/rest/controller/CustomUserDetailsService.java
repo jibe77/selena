@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +20,9 @@ public class CustomUserDetailsService implements UserDetailsService
     @Autowired
     private ConfigurationRepository configurationRepository;
 
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public UserDetails loadUserByUsername(String userName)
             throws UsernameNotFoundException {
@@ -29,7 +33,8 @@ public class CustomUserDetailsService implements UserDetailsService
             if (configuration == null ||
                     org.apache.commons.lang3.StringUtils.isEmpty(configuration.getConfigValue())) {
                 pwd = "password";
-                configurationRepository.save(new Configuration(ConfigurationKeyEnum.ADMIN_PASSWORD, pwd));
+                String result = bCryptPasswordEncoder.encode(pwd);
+                configurationRepository.save(new Configuration(ConfigurationKeyEnum.ADMIN_PASSWORD, result));
             } else {
                 pwd = configuration.getConfigValue();
             }
