@@ -45,7 +45,7 @@ public class ConfigurationRepositoryIT {
     public void testFindByKey() {
         String expected = "[selena]test";
         String actual =
-                configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME).getConfigValue();
+                configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name()).getConfigValue();
         Assert.assertNotNull(actual);
         Assert.assertEquals(expected, actual);
     }

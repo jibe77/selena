@@ -88,7 +88,7 @@ public class RestControllerTest {
         Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
         Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
         Mockito.when(mockRadioStationDAO.findByChannel(Mockito.anyInt())).thenReturn(radioStation);
-        Mockito.when(mockConfigurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME)).thenReturn(
+        Mockito.when(mockConfigurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name())).thenReturn(
                 new Configuration(ConfigurationKeyEnum.AIRPLAY_NAME, "[selena]test"));
         Mockito.doThrow(new RadioException(new Exception())).when(mockRadioService).playRadioChannel(radioStation);
 
@@ -119,7 +119,7 @@ public class RestControllerTest {
         Mockito.when(mockAirplayService.isAirplayOn()).thenReturn(true);
         Mockito.when(mockRadioService.isRadioOn()).thenReturn(true);
         Mockito.when(mockRadioStationDAO.findByChannel(Mockito.anyInt())).thenReturn(null);
-        Mockito.when(mockConfigurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME)).thenReturn(
+        Mockito.when(mockConfigurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name())).thenReturn(
                 new Configuration(ConfigurationKeyEnum.AIRPLAY_NAME, "[selena]test"));
         Mockito.doThrow(new RadioException(new Exception())).when(mockRadioService).playRadioChannel(radioStation);
 

@@ -9,4 +9,5 @@ public interface AirplayService {
     void turnAirplayOn() throws AirplayException;
     void turnAirplayOff();
     boolean isAirplayOn();
+    void destroy();
 }

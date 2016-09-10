@@ -18,7 +18,7 @@ public class Configuration implements Serializable {
     private Long id;
 
     @Column(name = "CONFIG_KEY", nullable = false, unique = true)
-    private ConfigurationKeyEnum configKey;
+    private String configKey;
 
     @Column(name = "CONFIG_VALUE")
     private String configValue;
@@ -26,8 +26,13 @@ public class Configuration implements Serializable {
     public Configuration() {
     }
 
-    public Configuration(ConfigurationKeyEnum configKey, String configValue) {
+    public Configuration(String configKey, String configValue) {
         this.configKey = configKey;
+        this.configValue = configValue;
+    }
+
+    public Configuration(ConfigurationKeyEnum keyEnum, String configValue) {
+        setConfigKey(keyEnum);
         this.configValue = configValue;
     }
 
@@ -39,12 +44,19 @@ public class Configuration implements Serializable {
         this.configValue = configValue;
     }
 
-    public ConfigurationKeyEnum getConfigKey() {
+    public String getConfigKey() {
         return configKey;
     }
 
-    public void setConfigKey(ConfigurationKeyEnum configKey) {
+    public void setConfigKey(String configKey) {
         this.configKey = configKey;
+    }
+
+    public void setConfigKey(ConfigurationKeyEnum configKey) {
+        if (configKey != null)
+            this.configKey = configKey.name();
+        else
+            this.configKey = null;
     }
 
     public Long getId() {

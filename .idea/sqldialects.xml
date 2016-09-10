@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/selenaPersistance/src/main/resources/SELENA_APP_SCHEMA/create-db.sql" dialect="Derby" />
-    <file url="file://$PROJECT_DIR$/selenaPersistance/src/main/resources/SELENA_APP_SCHEMA/insert-data.sql" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/selenaPersistance/schema/SELENA_APP_SCHEMA/create-db.sql" dialect="Derby" />
+    <file url="file://$PROJECT_DIR$/selenaPersistance/schema/SELENA_APP_SCHEMA/insert-data.sql" dialect="Derby" />
   </component>
 </project>

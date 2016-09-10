@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
@@ -18,6 +19,6 @@ import java.util.List;
  */
 public interface ConfigurationRepository extends CrudRepository<Configuration, Long> {
 
-    Configuration findByConfigKey(ConfigurationKeyEnum configurationKeyEnum);
+    Configuration findByConfigKey(@Param("configKey") String configKey);
 
 }

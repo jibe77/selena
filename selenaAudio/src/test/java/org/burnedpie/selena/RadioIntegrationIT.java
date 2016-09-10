@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
         ShairportDummyImpl.class,
         NativeCommand.class})
 @DataJpaTest
+@ActiveProfiles("macos")
 public class RadioIntegrationIT {
 
     private static final Logger s_logger = LoggerFactory.getLogger(RadioIntegrationIT.class);

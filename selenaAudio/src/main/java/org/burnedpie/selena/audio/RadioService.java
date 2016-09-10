@@ -9,4 +9,5 @@ public interface RadioService {
     void playRadioChannel(RadioStation radioStation);
     void stopRadio();
     boolean isRadioOn();
+    void destroy();
 }

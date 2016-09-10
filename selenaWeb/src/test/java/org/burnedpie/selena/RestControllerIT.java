@@ -10,6 +10,8 @@ import org.burnedpie.selena.persistance.dao.RadioStationRepository;
 import org.burnedpie.selena.persistance.domain.Configuration;
 import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.burnedpie.selena.persistance.domain.RadioStation;
+import org.burnedpie.selena.web.rest.WebSecurityConfig;
+import org.burnedpie.selena.web.rest.controller.CustomUserDetailsService;
 import org.burnedpie.selena.web.rest.controller.RemoteController;
 import org.burnedpie.selena.web.rest.controller.ReturnValue;
 import org.junit.*;
@@ -20,6 +22,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -44,9 +48,13 @@ import org.slf4j.LoggerFactory;
         ShairportDummyImpl.class,
         RadioServiceImpl.class,
         ConfigurationRepository.class,
-        RadioStationRepository.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+        RadioStationRepository.class,
+        WebSecurityConfig.class,
+        CustomUserDetailsService.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ActiveProfiles("macos")
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class RestControllerIT {
 
     Logger logger = LoggerFactory.getLogger(RestControllerIT.class.getName());
@@ -66,7 +74,15 @@ public class RestControllerIT {
     @Before
     public void setUp() throws MalformedURLException {
         this.base = new URL("http://localhost:" + port + "/");
+
         template = new TestRestTemplate();
+
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.ADMIN_PASSWORD.name()) == null) {
+            Configuration configuration = new Configuration();
+            configuration.setConfigKey(ConfigurationKeyEnum.ADMIN_PASSWORD);
+            configuration.setConfigValue("password");
+            configurationDAO.save(configuration);
+        }
 
         if (radioStationDAO.findByChannel(1) == null) {
             RadioStation radioStation = new RadioStation();
@@ -84,32 +100,30 @@ public class RestControllerIT {
             radioStationDAO.save(radioStation);
         }
 
-        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name()) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
             configuration.setConfigValue("[selena]integration-test");
             configurationDAO.save(configuration);
         }
 
-        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND.name()) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND);
             configuration.setConfigValue("echo volume_up");
             configurationDAO.save(configuration);
         }
 
-        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND) == null) {
+        if (configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND.name()) == null) {
             Configuration configuration = new Configuration();
             configuration.setConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND);
             configuration.setConfigValue("echo volume_down");
             configurationDAO.save(configuration);
         }
 
-        // TOOD : channel 2 on wav file
-
-        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME));
-        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND));
-        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND));
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name()));
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_UP_COMMAND.name()));
+        Assert.assertNotNull(configurationDAO.findByConfigKey(ConfigurationKeyEnum.VOLUME_DOWN_COMMAND.name()));
     }
 
     @After
@@ -152,8 +166,7 @@ public class RestControllerIT {
         String url = base + RemoteController.REST_PLAY_RADIO_STATION + "?radioStation=" + channel;
 
         // when
-        RestTemplate restTemplate = new RestTemplate();
-        ReturnValue returnValue = restTemplate.getForObject(url, ReturnValue.class);
+        ReturnValue returnValue = template.getForObject(url, ReturnValue.class);
 
         // then
         Assert.assertEquals(RemoteController.SUCCESS, returnValue.getStatus());
@@ -280,7 +293,7 @@ public class RestControllerIT {
         ReturnValue returnRadio = template.getForObject(urlRadio, ReturnValue.class);
         Thread.sleep(1000);
         ReturnValue returnRadio2 = template.getForObject(urlRadio, ReturnValue.class);
-        Thread.sleep(3000);
+        Thread.sleep(9000);
         ReturnValue returnRadio3 = template.getForObject(urlRadio, ReturnValue.class);
         ReturnValue returnValueAirplay  = template.getForObject(urlAirplay, ReturnValue.class);
 

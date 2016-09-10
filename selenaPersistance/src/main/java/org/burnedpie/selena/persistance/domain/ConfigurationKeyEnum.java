@@ -5,7 +5,7 @@ package org.burnedpie.selena.persistance.domain;
  */
 public enum ConfigurationKeyEnum {
     AIRPLAY_NAME,
-
     VOLUME_UP_COMMAND,
-    VOLUME_DOWN_COMMAND
+    VOLUME_DOWN_COMMAND,
+    ADMIN_PASSWORD
 }

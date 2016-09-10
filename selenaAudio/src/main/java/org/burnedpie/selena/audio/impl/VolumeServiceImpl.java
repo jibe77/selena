@@ -40,7 +40,7 @@ public class VolumeServiceImpl implements VolumeService {
 
     private void controlVolume(ConfigurationKeyEnum configurationKeyEnum) {
         try {
-            String value = configurationRepository.findByConfigKey(configurationKeyEnum).getConfigValue();
+            String value = configurationRepository.findByConfigKey(configurationKeyEnum.name()).getConfigValue();
             if (value == null) {
                 throw new VolumeException("command is undefined :" + configurationKeyEnum.name());
             }

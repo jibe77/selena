@@ -13,6 +13,7 @@ import org.burnedpie.selena.persistance.domain.ConfigurationKeyEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import java.io.IOException;
  */
 @Component
 @Scope("singleton")
+@Profile("raspbian")
 public class ShairportSyncImpl extends AbstractServiceAudio implements AirplayService {
 
     private Logger logger = LoggerFactory.getLogger(ShairportSyncImpl.class);
@@ -49,7 +51,7 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
             radioService.stopRadio();
         }
 
-        final Configuration configuration = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME);
+        final Configuration configuration = configurationRepository.findByConfigKey(ConfigurationKeyEnum.AIRPLAY_NAME.name());
         String serviceName;
         if (configuration == null || configuration.getConfigValue() == null) {
             serviceName = "SELENA Airplay";

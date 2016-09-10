@@ -1,8 +1,12 @@
 package org.burnedpie.selena.audio.impl;
 
 import org.apache.commons.exec.Executor;
+import org.burnedpie.selena.audio.util.NativeCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
 
 /**
  * Created by jibe on 31/08/16.
@@ -14,6 +18,9 @@ public class AbstractServiceAudio {
     protected Executor executor;
 
     protected String command;
+
+    @Autowired
+    NativeCommand nativeCommand;
 
     protected AbstractServiceAudio(String command) {
         this.command = command;
@@ -42,5 +49,13 @@ public class AbstractServiceAudio {
         }
         logger.info("Service " + command + " is off.");
         return false;
+    }
+
+    public synchronized void destroy() {
+        try {
+            nativeCommand.launchCommandAndReturnExitValue("killall", command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
