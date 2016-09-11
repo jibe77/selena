@@ -30,6 +30,9 @@ public class RadioServiceImpl extends AbstractServiceAudio implements RadioServi
     @Autowired
     AirplayService airplayService;
 
+    private String channel = "";
+    private String station = "";
+
     public RadioServiceImpl() {
         super("mplayer");
     }
@@ -46,6 +49,8 @@ public class RadioServiceImpl extends AbstractServiceAudio implements RadioServi
         logger.info("Starting radio " + radioStation.getName() + " ...");
         try {
             logger.info("launching mplayer ...");
+            channel = String.valueOf(radioStation.getChannel());
+            station = radioStation.getName();
             Executor executor = nativeCommand.launchNativeCommandAndReturnExecutorAndTurnOnAirplayOnStopped(
                     command,
                     radioStation.getUrl().endsWith("wav") ? "" : "-playlist",
@@ -59,10 +64,22 @@ public class RadioServiceImpl extends AbstractServiceAudio implements RadioServi
     }
 
     public synchronized void stopRadio() {
-        stopService();
+        channel = ""; station = ""; stopService();
     }
 
     public boolean isRadioOn() {
         return isServiceOn();
     }
+
+    @Override
+    public String getChannel() {
+        return channel;
+    }
+
+    @Override
+    public String getStation() {
+        return station;
+    }
+
+
 }

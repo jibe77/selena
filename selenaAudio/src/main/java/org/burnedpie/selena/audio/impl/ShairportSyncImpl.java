@@ -38,6 +38,7 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
     @Autowired
     ConfigurationRepository configurationRepository;
 
+    protected String name = "";
 
     public ShairportSyncImpl() {
         super("shairport-sync");
@@ -61,6 +62,7 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
         logger.info("Starting airplay with name " + serviceName + "...");
         try {
             logger.info("Starting " + command + " ...");
+            this.name = serviceName;
             this.executor = startCommand(serviceName);
             logger.info("... " + command + " is running.");
         } catch (IOException | NullPointerException e) {
@@ -75,10 +77,15 @@ public class ShairportSyncImpl extends AbstractServiceAudio implements AirplaySe
     }
 
     public void turnAirplayOff() {
-        super.stopService();
+        super.stopService(); name = "";
     }
 
     public boolean isAirplayOn() {
         return isServiceOn();
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 }

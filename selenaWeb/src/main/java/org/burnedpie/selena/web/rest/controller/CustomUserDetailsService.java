@@ -26,7 +26,8 @@ public class CustomUserDetailsService implements UserDetailsService
     @Override
     public UserDetails loadUserByUsername(String userName)
             throws UsernameNotFoundException {
-        if (userName.equals("admin")) {
+        String adminName = "admin";
+        if (userName.equals(adminName)) {
             Configuration configuration =
                     configurationRepository.findByConfigKey(ConfigurationKeyEnum.ADMIN_PASSWORD.name());
             String pwd = null;
@@ -38,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService
             } else {
                 pwd = configuration.getConfigValue();
             }
-            return new SecurityUser(new User(pwd));
+            return new SecurityUser(new User(adminName, pwd));
         } else {
             throw new UsernameNotFoundException("User unknown.");
         }

@@ -10,4 +10,8 @@ public interface RadioService {
     void stopRadio();
     boolean isRadioOn();
     void destroy();
+
+    String getChannel();
+
+    String getStation();
 }

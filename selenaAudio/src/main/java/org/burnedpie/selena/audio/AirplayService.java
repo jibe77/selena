@@ -10,4 +10,5 @@ public interface AirplayService {
     void turnAirplayOff();
     boolean isAirplayOn();
     void destroy();
+    String getName();
 }
