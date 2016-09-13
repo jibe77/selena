@@ -9,7 +9,6 @@
       <driver-properties>
         <property name="databaseName" value="selena" />
       </driver-properties>
-      <libraries />
     </data-source>
   </component>
 </project>

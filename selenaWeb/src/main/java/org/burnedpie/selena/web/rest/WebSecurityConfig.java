@@ -40,7 +40,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     RemoteController.REST_START_AIRPLAY,
                     RemoteController.REST_STOP,
                     RemoteController.REST_VOLUME_DOWN,
-                    RemoteController.REST_VOLUME_UP)
+                    RemoteController.REST_VOLUME_UP,
+                    "/")
                 .permitAll()
             .anyRequest().authenticated()
             .and()
