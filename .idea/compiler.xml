@@ -25,40 +25,10 @@
         <module name="audio" />
         <module name="selena-audio" />
         <module name="selena-web" />
-      </profile>
-      <profile default="false" name="Annotation profile for springBoot" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-      </profile>
-      <profile default="false" name="Annotation profile for selenaWeb" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="selenaWeb" />
-      </profile>
-      <profile default="false" name="Annotation profile for selenaPersistance" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="selenaPersistance" />
-      </profile>
-      <profile default="false" name="Annotation profile for selenaElectro" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
-        <module name="selenaElectro" />
-      </profile>
-      <profile default="false" name="Annotation profile for selenaAudio" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="true" />
         <module name="selenaAudio" />
+        <module name="selenaElectro" />
+        <module name="selenaPersistance" />
+        <module name="selenaWeb" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
