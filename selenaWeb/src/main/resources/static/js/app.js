@@ -9,7 +9,13 @@ app.config(function($routeProvider){
             templateUrl: '/views/roles.html',
             controller: 'rolesController'
         })
+        when('/player',{
+            templateUrl: '/views/player.html',
+            controller: 'playerController'
+        })
         .otherwise(
-            { redirectTo: '/'}
+            {
+                redirectTo: '/player'
+            }
         );
 });

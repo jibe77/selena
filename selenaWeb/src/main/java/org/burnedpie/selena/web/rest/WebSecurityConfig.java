@@ -42,6 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     RemoteController.REST_VOLUME_DOWN,
                     RemoteController.REST_VOLUME_UP,
                     "/",
+                    "/player",
+                    "/recorder",
                     "/images/*")
                 .permitAll()
             .anyRequest().authenticated()

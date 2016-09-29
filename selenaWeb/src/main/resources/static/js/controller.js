@@ -5,3 +5,7 @@ app.controller('usersController', function($scope) {
 app.controller('rolesController', function($scope) {
     $scope.headingTitle = "Roles List";
 });
+
+app.controller('playerController', function($scope) {
+    $scope.headingTitle = "Player";
+});
