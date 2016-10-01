@@ -44,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/",
                     "/player",
                     "/recorder",
+                    "/help",
                     "/images/*")
                 .permitAll()
             .anyRequest().authenticated()

@@ -29,6 +29,18 @@ public class HomeController {
         return "views/recorder";
     }
 
+    @RequestMapping(value="/settings", method=RequestMethod.GET)
+    public String settings(Model model){
+        model.addAttribute("currentPage", "settings");
+        return "views/settings";
+    }
+
+    @RequestMapping(value="/help", method=RequestMethod.GET)
+    public String help(Model model){
+        model.addAttribute("currentPage", "help");
+        return "views/help";
+    }
+
     @RequestMapping(value="/users", method=RequestMethod.GET)
     public String users(Model model){
         return "views/users";
