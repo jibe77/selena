@@ -1,11 +1,15 @@
-app.controller('usersController', function($scope) {
-    $scope.headingTitle = "User List";
-});
-
-app.controller('rolesController', function($scope) {
-    $scope.headingTitle = "Roles List";
-});
-
 app.controller('playerController', function($scope) {
-    $scope.headingTitle = "Player";
+
+});
+
+app.controller('recorderController', function($scope) {
+
+});
+
+app.controller('settingsController', function($scope) {
+
+});
+
+app.controller('helpController', function($scope) {
+
 });
